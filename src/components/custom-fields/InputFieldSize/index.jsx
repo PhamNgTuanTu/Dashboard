@@ -16,6 +16,7 @@ function InputFieldSize(props) {
     //validation 
     const { errors, touched } = form;
     const showError = errors[name] && touched[name];
+
     const handleSizeChange = (values) => {
         form.setFieldValue(name, values);
     }

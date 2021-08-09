@@ -26,6 +26,7 @@ function SelectField(props) {
 
     const { loadingPage } = useSelector(state => state.select);
 
+
     // covert sang dạng value, label react-select
     options = options && options.map(item => {
         return {
@@ -57,7 +58,7 @@ function SelectField(props) {
                 onChange={handleSelectedOptionChange}
                 isLoading={loadingPage ? true : false}
                 options={options}
-                placeholder={ placeholder}
+                placeholder={placeholder}
                 isRequired
                 className={showError && "has-error"}
             />

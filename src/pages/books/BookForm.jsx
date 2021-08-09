@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FastField, Field, Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import InputFieldBootstrap from '../../components/custom-fields/InputFieldBootstrap';
 import InputFieldSize from '../../components/custom-fields/InputFieldSize';
 import SelectField from '../../components/custom-fields/SelectField';
@@ -14,11 +14,12 @@ BookForm.propTypes = {
     dataSelect: PropTypes.object,
 };
 BookForm.defaultProps = {
-    initialValues: '',
-    dataSelect: '',
+    initialValues: null,
+    dataSelect: null,
 }
 function BookForm(props) {
     const { initialValues, dataSelect } = props;
+
 
     var currentTime = new Date();
     var year = currentTime.getFullYear();
@@ -72,14 +73,10 @@ function BookForm(props) {
             .nullable(),
         front_cover: Yup.mixed()
             .required("Vui lòng chọn hình ảnh")
-            .test("fileSize", "Kích thước file phải nhỏ hơn 2mb", (value) => {
-                return value && value.size <= 2000000;
-            }),
+            .nullable(),
         back_cover: Yup.mixed()
             .required("Vui lòng chọn hình ảnh")
-            .test("fileSize", "Kích thước file phải nhỏ hơn 2mb", (value) => {
-                return value && value.size <= 2000000;
-            }),
+            .nullable(),
         description: Yup.string()
             .required('Vui lòng nhập trường này')
     })
@@ -91,13 +88,12 @@ function BookForm(props) {
             enableReinitialize
         >
             {formikProps => {
-                const { isSubmitting, values, errors, touched } = formikProps;
-                // console.log({ values, errors, touched });
+                const { isSubmitting } = formikProps;
                 return (
                     <Form>
                         <div className="row">
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="name"
                                     component={InputFieldBootstrap}
 
@@ -108,7 +104,7 @@ function BookForm(props) {
                                 />
                             </div>
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="code"
                                     component={InputFieldBootstrap}
 
@@ -121,7 +117,7 @@ function BookForm(props) {
                         </div>
                         <div className="row">
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="unit_price"
                                     component={InputFieldBootstrap}
 
@@ -132,7 +128,7 @@ function BookForm(props) {
                                 />
                             </div>
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="language"
                                     component={InputFieldBootstrap}
 
@@ -145,7 +141,7 @@ function BookForm(props) {
                         </div>
                         <div className="row">
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="format"
                                     component={InputFieldBootstrap}
 
@@ -156,7 +152,7 @@ function BookForm(props) {
                                 />
                             </div>
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="release_date"
                                     component={InputYearField}
 
@@ -167,7 +163,7 @@ function BookForm(props) {
                         </div>
                         <div className="row">
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="weight"
                                     component={InputFieldBootstrap}
 
@@ -178,7 +174,7 @@ function BookForm(props) {
                                 />
                             </div>
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="size"
                                     component={InputFieldSize}
                                 />
@@ -186,7 +182,7 @@ function BookForm(props) {
                         </div>
                         <div className="row">
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="num_pages"
                                     component={InputFieldBootstrap}
 
@@ -197,7 +193,7 @@ function BookForm(props) {
                                 />
                             </div>
                             <div className="col-6">
-                                <FastField
+                                <Field
                                     name="translator"
                                     component={InputFieldBootstrap}
 
@@ -216,7 +212,7 @@ function BookForm(props) {
 
                                     label="Chọn Thể Loại"
                                     placeholder="Chọn Thể Loại ... "
-                                    options={dataSelect && dataSelect.category}
+                                    options={dataSelect.category}
                                 />
                             </div>
                             <div className="col-6">
@@ -226,7 +222,7 @@ function BookForm(props) {
 
                                     label="Chọn Tác Giả"
                                     placeholder="Chọn Tác Giả ... "
-                                    options={dataSelect && dataSelect.author}
+                                    options={dataSelect.author}
                                 />
                             </div>
                         </div>
@@ -238,7 +234,7 @@ function BookForm(props) {
 
                                     label="Chọn Nhà Xuất Bản"
                                     placeholder="Chọn Nhà Xuất Bản ... "
-                                    options={dataSelect && dataSelect.publisher}
+                                    options={dataSelect.publisher}
                                 />
                             </div>
                             <div className="col-6">
@@ -248,12 +244,12 @@ function BookForm(props) {
 
                                     label="Chọn Nhà Cung Cấp"
                                     placeholder="Chọn Nhà Cung Cấp ... "
-                                    options={dataSelect && dataSelect.supplier}
+                                    options={dataSelect.supplier}
                                 />
                             </div>
                         </div>
                         <div className="row">
-                            <FastField
+                            <Field
                                 name="front_cover"
                                 component={InputFile}
 
@@ -261,7 +257,7 @@ function BookForm(props) {
                                 placeholder="Vui lòng chọn tệp (jpg,jpeg,bmp,png)"
                                 type="file"
                             />
-                            <FastField
+                            <Field
                                 name="back_cover"
                                 component={InputFile}
 
@@ -272,7 +268,7 @@ function BookForm(props) {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                <FastField
+                                <Field
                                     name="description"
                                     component={tinyMCE}
 

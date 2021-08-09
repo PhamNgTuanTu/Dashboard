@@ -10,7 +10,7 @@ import modalError from '../../components/modal/Error';
 import modalSuccess from '../../components/modal/Success';
 import Pagination from '../../components/paginate/Pagination';
 import Search from '../../components/search/SearchTable';
-import { addBooks, editBooks, removeBooks, setDataBook, setLoadingData, setPageBooks } from '../../store/book';
+import { removeBooks, setPageBooks } from '../../store/book';
 import Table from './TableBook';
 import View from './View';
 
@@ -23,46 +23,14 @@ function Books(props) {
     const dispatch = useDispatch();
     const history = useHistory();
     let { path } = useRouteMatch();
-    const [Loading, setLoading] = useState(false);
     const [loadingDelete, setLoadingDelete] = useState(false);
     const [searchValue, setSearchValue] = useState('');
-
-    // id suppliers edit
-    const [idEdit, setIdEdit] = useState();
 
     //lấy danh sách suppliers từ store lên form edit
     const { books } = useSelector(state => state.book);
 
     // loading
     const { loadingPage } = useSelector(state => state.book)
-
-    // kiểm tra tính năng add hay edit
-    const [isAddMode, setIsAddMode] = useState(true)
-
-    // lấy id từ button edit 
-    const booksEdit = books.find(x => x.id === idEdit);
-
-    // giá trị ban đầu của form
-    let initialValues = isAddMode ?
-        {
-            name: '',
-            address: '',
-            phone: '',
-            email: '',
-            description: ''
-        } : booksEdit;
-
-    // nếu xóa thì initialValues trả giá trị mặc định
-    if (initialValues) {
-    } else {
-        initialValues = {
-            name: '',
-            address: '',
-            phone: '',
-            email: '',
-            description: ''
-        }
-    }
 
     // lấy numberPage trên url 
     const location = useLocation();
@@ -82,20 +50,10 @@ function Books(props) {
 
     //load data lên store
     useEffect(() => {
-        async function LoadData() {
-            try {
-                const response = await bookApi.getAll();
-                dispatch(setDataBook(response.data));
-                dispatch(setLoadingData(false))
-                if (pageFromUrl !== undefined) {
-                    setCurrentPage(Number(pageFromUrl))
-                    setDocTitle(`Trang ${pageFromUrl} - ${nameTitleInitial}`)
-                }
-            } catch (error) {
-                console.error(error)
-            }
+        if (pageFromUrl !== undefined) {
+            setCurrentPage(Number(pageFromUrl))
+            setDocTitle(`Trang ${pageFromUrl} - ${nameTitleInitial}`)
         }
-        LoadData();
         // eslint-disable-next-line
     }, []);
 
@@ -156,7 +114,7 @@ function Books(props) {
         window.$('#viewInfoBook').modal('show')
     }
     const handelView = () => {
-        setHideText(true)
+        setHideText(!hideText)
     }
 
     const handleEditClick = (id) => {
@@ -164,6 +122,8 @@ function Books(props) {
         const editBookUrl = `${path}/edit-${booksEdit.slug}-${id}.html`;
         history.push(editBookUrl);
     }
+
+
     return (
         <>
             {
@@ -232,7 +192,11 @@ function Books(props) {
                     </div>
                 </div>
             </section>
-            <View arrInfoBook={arrInfoBook} handelView={handelView} hideText={hideText} />
+            <View
+                arrInfoBook={arrInfoBook}
+                handelView={handelView}
+                hideText={hideText}
+            />
         </>
     );
 }

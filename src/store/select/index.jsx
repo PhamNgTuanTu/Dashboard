@@ -5,10 +5,6 @@ const slice = createSlice({
     initialState: {
         dataSelect: {},
         loadingPage: true,
-        errorPageHeight: false,
-        errorPageWidth: false,
-        errorPageHeightMes: '',
-        errorPageWidthMes: '',
     },
     reducers: {
         setDataSelectSuccess: (state, action) => {
@@ -17,14 +13,11 @@ const slice = createSlice({
         setLoadingDataSuccess: (state, action) => {
             state.loadingPage = action.payload;
         },
-        setErrorDataSuccess: (state, action) => {
-            state.errorPageHeight = action.payload;
-        },
     },
 });
 export default slice.reducer;
 
-const { setDataSelectSuccess,setLoadingDataSuccess,setErrorDataSuccess } = slice.actions;
+const { setDataSelectSuccess,setLoadingDataSuccess } = slice.actions;
 
 export const setDataSelect = (data) => async (dispatch) => {
     try {
@@ -33,16 +26,9 @@ export const setDataSelect = (data) => async (dispatch) => {
         return console.error(e.message);
     }
 };
-export const setLoadingData = (status) => async (dispatch) => {
+export const setLoadingDataSelect = (status) => async (dispatch) => {
     try {
         dispatch(setLoadingDataSuccess(status));
-    } catch (e) {
-        return console.error(e.message);
-    }
-};
-export const setErrorHeight = (status) => async (dispatch) => {
-    try {
-        dispatch(setErrorDataSuccess(status));
     } catch (e) {
         return console.error(e.message);
     }

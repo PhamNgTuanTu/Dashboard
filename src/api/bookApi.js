@@ -16,7 +16,7 @@ const bookApi = {
   },
   editBookApi: (data, id) => {
     const url = `/api/books/${id}`;
-    return axiosClient.put(url, data);
+    return axiosClient.post(url, data);
   },
 }
 
