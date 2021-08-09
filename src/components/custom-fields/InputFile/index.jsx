@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useRef, useState } from 'react';
 
 InputFile.propTypes = {
     field: PropTypes.object.isRequired,
@@ -19,12 +19,13 @@ function InputFile(props) {
     const { field, form,
         label, placeholder, type
     } = props;
-    const { name } = field;
+    const { name, value } = field;
 
     //validation 
     const { errors, touched } = form;
     const showError = errors[name] && touched[name];
     const [files, setFiles] = useState([]);
+
     const getFileMetadata = file => {
         return {
             lastModified: file.lastModified,
@@ -40,6 +41,15 @@ function InputFile(props) {
         inputFile.current.click();
     };
 
+
+    if (value && value.constructor === String) {
+        window.$(`.imgupload${name}`).hide();
+        window.$(`.imgupload${name}.stop`).hide();
+        window.$(`.imgupload${name}.ok`).show();
+        window.$(`#img${name}`).css({ "color": "green", "font-weight": 700 });
+        window.$(`#img${name}`).html(value);
+    }
+
     const handleChange = (event) => {
         //here we take the file extension and set an array of valid extensions
         let newstate = [];
@@ -48,7 +58,7 @@ function InputFile(props) {
         var filename = arr.slice(-1)[0];
         var filextension = filename.split(".");
         var filext = "." + filextension.slice(-1)[0];
-        var valid = [".jpg", ".png", ".jpeg", ".bmp"];
+        var valid = [".jpg", ".png", ".jpeg"];
         //if file is not valid we show the error icon, the red alert, and hide the submit button
         if (valid.indexOf(filext.toLowerCase()) === -1) {
             window.$(`.imgupload${name}`).hide();
@@ -77,7 +87,9 @@ function InputFile(props) {
 
             setFiles(newstate);
         }
+
     }
+
     return (
         <div className="col-md-6 col-md-offset-3 center">
             <div className="form-group mb-0">
@@ -95,13 +107,16 @@ function InputFile(props) {
                     <i className='bx bxs-file-image'></i>
                 </div>
                 <div className={`imgupload${name} ok mt-3`} id="showImage">
-                    {files.map((item, index) => {
-                        return (
-                            <div key={index}>
-                                <img src={item.url} alt="" height="200" />
-                            </div>
-                        );
-                    })}
+                    {value && value.constructor === String
+                        ?
+                        <img src={`${process.env.REACT_APP_API_URL}/images/books/${value}`} height="200" alt={value} />
+                        : files.map((item, index) => {
+                            return (
+                                <div key={index}>
+                                    <img src={item.url} alt="" height="200" />
+                                </div>
+                            );
+                        })}
                 </div>
                 <div className={`imgupload${name} stop`}>
                     <i className='bx bx-x'></i>

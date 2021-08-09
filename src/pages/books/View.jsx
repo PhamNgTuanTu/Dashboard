@@ -8,11 +8,11 @@ View.propTypes = {
 };
 View.defaultProps = {
     arrInfoBook: null,
-    hideText : false,
+    hideText: false,
 }
 
 function View(props) {
-    let { arrInfoBook,hideText } = props;
+    let { arrInfoBook, hideText } = props;
     return (
         <div className="modal fade" id="viewInfoBook" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog modal-lg" role="document">
@@ -121,7 +121,7 @@ function View(props) {
                                             <p>Tác Giả:</p>
                                         </div>
                                         <div className="col-8">
-                                            <p>{arrInfoBook.author}.</p>
+                                            <p>{arrInfoBook.author.name}.</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -129,7 +129,7 @@ function View(props) {
                                             <p>Nhà Xuất Bản:</p>
                                         </div>
                                         <div className="col-8">
-                                            <p>{arrInfoBook.publisher}.</p>
+                                            <p>{arrInfoBook.publisher.name}.</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -137,7 +137,7 @@ function View(props) {
                                             <p>Nhà Cung Cấp:</p>
                                         </div>
                                         <div className="col-8">
-                                            <p>{arrInfoBook.supplier}.</p>
+                                            <p>{arrInfoBook.supplier.name}.</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -145,7 +145,7 @@ function View(props) {
                                             <p>Số Lượng Tồn:</p>
                                         </div>
                                         <div className="col-8">
-                                            <p>{arrInfoBook.inventory.available_quantity}</p>
+                                            <p>{arrInfoBook.quantity}</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -176,7 +176,7 @@ function View(props) {
                                         <div className="col-6">
                                             <div className="show-img-modal">
                                                 <p>Ảnh Mặt Trước:</p>
-                                                <img src={`${process.env.REACT_APP_API_URL}/images/${arrInfoBook.image.front_cover}`}
+                                                <img src={`${process.env.REACT_APP_API_URL}/images/books/${arrInfoBook.image.front_cover}`}
                                                     alt={arrInfoBook.image.front_cover} height={300}
                                                 />
                                             </div>
@@ -184,7 +184,7 @@ function View(props) {
                                         <div className="col-6">
                                             <div className="show-img-modal">
                                                 <p>Ảnh Mặt Sau:</p>
-                                                <img src={`${process.env.REACT_APP_API_URL}/images/${arrInfoBook.image.back_cover}`}
+                                                <img src={`${process.env.REACT_APP_API_URL}/images/books/${arrInfoBook.image.back_cover}`}
                                                     alt={arrInfoBook.image.back_cover} height={300}
                                                 />
                                             </div>

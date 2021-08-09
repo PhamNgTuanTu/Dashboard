@@ -123,9 +123,9 @@ function Table(props) {
                                     <td >{book.name}</td>
                                     <td >{book.code}</td>
                                     <td >{book.unit_price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
-                                    <td >{book.inventory.available_quantity}</td>
+                                    <td >{book.quantity}</td>
                                     <td >{book.category.name}</td>
-                                    <td >{book.author}</td>
+                                    <td >{book.author.name}</td>
                                     <td >
                                         <button onClick={() => handleEditClick(book.id)}
                                             type="button"

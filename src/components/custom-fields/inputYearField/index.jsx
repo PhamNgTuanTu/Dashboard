@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 
 InputYearField.propTypes = {
@@ -26,8 +27,13 @@ function InputYearField(props) {
     const { errors, touched } = form;
     const showError = errors[name] && touched[name];
 
+    const [startDate, setStartDate] = useState(null);
+
+    useEffect(()=> {
+        setStartDate(value ? new Date(`${value}`) : null)
+    },[value])
+
     // const [startDate, setStartDate] = useState(null);
-    const [startDate, setStartDate] = useState(value ? new Date(`${value}`) : null);
 
     const handleChange = (date) => {
         setStartDate(date)

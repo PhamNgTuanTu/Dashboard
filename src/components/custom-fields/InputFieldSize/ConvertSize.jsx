@@ -4,29 +4,31 @@ import React, { useEffect, useState } from 'react';
 ConvertSize.propTypes = {
     onSizeChange: PropTypes.func,
     showError: PropTypes.bool,
+    valuesSize: PropTypes.string,
 };
 
 ConvertSize.defaultProps = {
     onSizeChange: null,
     showError: false,
+    valuesSize : ''
 }
 
 function ConvertSize(props) {
-    var errorString = 'Vui lòng nhập trường này';
-    var errorNumber = 'Vui lòng nhập số';
-
     const { onSizeChange, showError, valuesSize } = props;
-    const [values, setValues] = useState({
-        height: '',
-        width: '',
-    })
     const [error, setError] = useState(false);
     const [error1, setError1] = useState(false);
     const [errorMes, setErrorMes] = useState('');
     const [errorMes1, setErrorMes1] = useState('');
+    var errorString = 'Vui lòng nhập trường này';
+    var errorNumber = 'Vui lòng nhập số';
+    
+    const [values, setValues] = useState({
+        height: '',
+        width: '',
+    })
 
     // cắt chuỗi với khoảng cách
-    const arString = valuesSize.split(' ');
+    const arString = valuesSize && valuesSize.split(' ');
     //lấy chiều dài sách
     const getHeight = arString.slice(0, 1)[0];
     //lấy chiều rộng sách
@@ -42,17 +44,14 @@ function ConvertSize(props) {
             setError1(showError);
         }
         if (valuesSize) {
-            setValues({
+            setValues(valuesSize && {
                 height: getHeight,
                 width: getWidth,
             })
         }
         // eslint-disable-next-line
-    }, [showError])
-    // const [values, setValues] = useState({
-    //     height: 14,
-    //     width: 20,
-    // })
+    }, [showError,valuesSize])
+    
     const handleChange = (e) => {
         setValues({
             ...values,
