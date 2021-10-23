@@ -1,17 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import App from './App';
+import * as serviceWorker from "./serviceWorker";
 import store from "./store";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
+const app = (
+  <Provider store={store}>
+    <BrowserRouter>
       <App />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+    </BrowserRouter>
+  </Provider>
+)
 
-reportWebVitals();
+ReactDOM.render(app, document.getElementById("root"))
+serviceWorker.unregister()

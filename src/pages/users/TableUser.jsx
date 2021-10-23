@@ -106,8 +106,6 @@ function TableUser(props) {
                         <th scope="col">Địa Chỉ</th>
                         <th scope="col">Số Điện Thoại</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Ngày Tạo</th>
-                        <th scope="col">Ngày Sửa</th>
                         <th scope="col">Trạng Thái</th>
                     </tr>
                 </thead>
@@ -121,11 +119,9 @@ function TableUser(props) {
                                     <td >{user.address}</td>
                                     <td >{user.phone}</td>
                                     <td >{user.email}</td>
-                                    <td >{user.created_at}</td>
-                                    <td >{user.updated_at}</td>
                                     <td >
-                                        <span onClick={() => props.onChangeStatus(user.status, user.id)} className={user.status === "Khóa" ? "badge badge-danger status-user" : "badge badge-primary status-user"}>
-                                            {user.status}
+                                        <span onClick={() => props.onChangeStatus(user.status, user.id)} className={user.status === 0 ? "badge badge-danger status-user" : "badge badge-primary status-user"}>
+                                            {user.status === 0 ? 'Khóa' : 'Hoạt động'}
                                         </span>
                                     </td>
                                 </tr>

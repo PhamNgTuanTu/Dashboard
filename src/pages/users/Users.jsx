@@ -78,7 +78,7 @@ function Users(props) {
     }
 
     const onChangeStatus = (status, id) => {
-        if (status === "Hoạt động") {
+        if (status === 1) {
             Swal.fire({
                 title: 'Khóa Tài Khoản ?',
                 text: "Bạn có muốn khóa tài khoản này",
@@ -90,10 +90,10 @@ function Users(props) {
                 cancelButtonText: 'Hủy',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    userApi.editStatus({ status: "Khóa" }, id)
+                    userApi.editStatus({ status: 0 }, id)
                         .then(response => {
                             if (response.success) {
-                                dispatch(setStatus("Khóa", id))
+                                dispatch(setStatus(0, id))
                                 modalSuccess(response.message);
                             }
                         }).catch(error => {
@@ -107,10 +107,10 @@ function Users(props) {
                 }
             })
         } else {
-            userApi.editStatus({ status: "Hoạt động" }, id)
+            userApi.editStatus({ status: 1 }, id)
                 .then(response => {
                     if (response.success) {
-                        dispatch(setStatus("Hoạt động", id))
+                        dispatch(setStatus(1, id))
                         modalSuccess(response.message);
                     }
                 }).catch(error => {

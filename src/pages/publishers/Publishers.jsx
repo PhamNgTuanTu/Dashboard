@@ -18,7 +18,7 @@ import View from './View';
 Publishers.propTypes = {};
 
 function Publishers(props) {
-    const nameTitleInitial = 'Nhà Xuất Bản';
+    const nameTitleInitial = 'Quản lý nhà xuất bản';
     const [, setDocTitle] = useDocTitle(nameTitleInitial);
 
     const dispatch = useDispatch();

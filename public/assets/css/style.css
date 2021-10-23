@@ -253,6 +253,7 @@
   color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  opacity: 0.8;
 }
 
 .couner i {
@@ -456,7 +457,7 @@ table th {
   color: #dc3545;
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: start;
   margin-top: .25rem;
 }
 .show-error p {
@@ -637,12 +638,14 @@ button:focus {
   color: white;
 }
 .imguploadfront_cover,
-.imguploadback_cover {
+.imguploadback_cover,
+.imguploadimage {
   color: #1e2832;
   font-size: 7em;
 }
 #imgfront_cover,
-#imgback_cover {
+#imgback_cover,
+#imgimage {
   color: black;
   white-space: pre-wrap;
   overflow: hidden;
@@ -656,24 +659,27 @@ h4 > strong {
 
 /*these two are set to not display at start*/
 .imguploadfront_cover.ok,
-.imguploadback_cover.ok {
+.imguploadback_cover.ok,
+.imguploadimage.ok  {
   display: none;
   color: green;
   min-height: 200px;
 }
-#img-valuefront_cover,#img-valueback_cover {
+#img-valuefront_cover,#img-valueback_cover ,#img-valueimage{
   color: green;
   font-weight: 700;
 }
 .imguploadfront_cover.stop,
-.imguploadback_cover.stop {
+.imguploadback_cover.stop,
+.imguploadimage.stop{
   display: none;
   color: red;
 }
 
 /*this sets the actual file input to overlay our button*/
 #front_cover,
-#back_cover {
+#back_cover,
+#image {
   opacity: 0;
   -moz-opacity: 0;
   filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
@@ -764,4 +770,25 @@ h4 > strong {
 .has-error-file {
   border: 1px solid #dc3545 !important;
   border-radius: 4px;
+}
+.custom-pagination ul li {
+  border-radius: 50%;
+}
+.bg-light-custom {
+  background-color: #6c757d
+}
+.link_home:hover,.link_home-1:hover ,.link_home-2:hover,.link_home-3:hover{
+  text-decoration: none;
+}
+.link_home:hover > .bg-warning {
+  opacity: 1;
+}
+.link_home-1:hover > .bg-primary {
+  opacity: 1;
+}
+.link_home-2:hover > .bg-light-custom {
+  opacity: 1;
+}
+.link_home-3:hover > .bg-success {
+  opacity: 1;
 }

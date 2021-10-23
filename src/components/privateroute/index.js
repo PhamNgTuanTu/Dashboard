@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
 import Login from "../../pages/login/Login";
 
@@ -8,9 +7,19 @@ export default function PrivateRoute({
   Component,
   ...restProps
 }) {
-  const { user } = useSelector((state) => state.user);
+  // const { user } = useSelector((state) => state.user);
 
-  return user?.token ?
+  const checkValidToken = () => {
+    const token = localStorage.getItem('user');
+    if (token) {
+     return true
+    } else {
+      return false
+    }
+  }
+
+
+  return checkValidToken() ?
     (
       <Route path={path} component={Component} {...restProps} />
     )

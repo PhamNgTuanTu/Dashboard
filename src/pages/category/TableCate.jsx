@@ -88,11 +88,9 @@ function Table(props) {
             <table className={loadingPage ? "d-none" : "table table-hover table-bordered"}>
                 <thead className="thead-dark">
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Tên</th>
-                        <th scope="col">Thời Gian Tạo</th>
-                        <th scope="col">Thời Gian Sửa</th>
-                        <th scope="col">Action</th>
+                        <th scope="col" className="w-25">#</th>
+                        <th scope="col" className="w-50">Tên</th>
+                        <th scope="col" className="w-25">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,8 +100,6 @@ function Table(props) {
                                 <tr key={index}>
                                     <th scope="row">{index + 1}</th>
                                     <td >{cate.name}</td>
-                                    <td >{cate.created_at}</td>
-                                    <td >{cate.updated_at}</td>
                                     <td >
                                         <button onClick={() => handleEditClick(cate.id)}
                                             type="button"
