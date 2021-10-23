@@ -11,11 +11,11 @@ const userApi = {
         return axiosClient.post(url);
     },
     getAll: () => {
-        const url = '/api/admin/users-list';
+        const url = '/api/admin/users/list';
         return axiosClient.get(url);
     },
     editStatus: (data,id) => {
-        const url = `/api/admin/update-status-user/${id}`;
+        const url = `/api/admin/users/status/${id}`;
         return axiosClient.put(url , data);
       },
 }

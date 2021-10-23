@@ -176,16 +176,16 @@ function View(props) {
                                         <div className="col-6">
                                             <div className="show-img-modal">
                                                 <p>Ảnh Mặt Trước:</p>
-                                                <img src={`${process.env.REACT_APP_API_URL}/images/books/${arrInfoBook.image.front_cover}`}
-                                                    alt={arrInfoBook.image.front_cover} height={300}
+                                                <img src={`${process.env.REACT_APP_API_URL}/images/${arrInfoBook.image.front_cover}`}
+                                                    alt={arrInfoBook.image.front_cover} height={200} width="auto"
                                                 />
                                             </div>
                                         </div>
                                         <div className="col-6">
                                             <div className="show-img-modal">
                                                 <p>Ảnh Mặt Sau:</p>
-                                                <img src={`${process.env.REACT_APP_API_URL}/images/books/${arrInfoBook.image.back_cover}`}
-                                                    alt={arrInfoBook.image.back_cover} height={300}
+                                                <img src={`${process.env.REACT_APP_API_URL}/images/${arrInfoBook.image.back_cover}`}
+                                                    alt={arrInfoBook.image.back_cover} height={200} width="auto"
                                                 />
                                             </div>
                                         </div>

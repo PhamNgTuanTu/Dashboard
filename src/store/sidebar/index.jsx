@@ -7,6 +7,12 @@ const initialSidebar = [
         icon: "bx bxs-home",
     },
     {
+        name: 'Đơn hàng',
+        to: '/order',
+        exact: false,
+        icon: "bx bxs-detail",
+    },
+    {
         name: 'Người Dùng',
         to: '/users',
         exact: false,
@@ -42,6 +48,18 @@ const initialSidebar = [
         exact: false,
         icon: "bx bx-book",
     },
+    {
+        name: 'Nhập kho',
+        to: '/warehouse',
+        exact: false,
+        icon: "bx bxs-box",
+    },
+    {
+        name: 'Giảm giá',
+        to: '/discount',
+        exact: false,
+        icon: "bx bxs-discount",
+    }
 ];
 const slice = createSlice({
     name: "sidebar",

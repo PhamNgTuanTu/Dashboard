@@ -19,7 +19,7 @@ import View from './View';
 Category.propTypes = {};
 
 function Category(props) {
-    const nameTitleInitial = 'Thể Loại Sách';
+    const nameTitleInitial = 'Quản lý thể loại';
     const [, setDocTitle] = useDocTitle(nameTitleInitial);
 
     const dispatch = useDispatch();

@@ -60,6 +60,16 @@ function View(props) {
                                         </div>
                                     </div>
                                     <div className="row">
+                                        <div className="col-6">
+                                            <div className="show-img-modal">
+                                                <p>Ảnh tác giả:</p>
+                                                <img src={`${process.env.REACT_APP_API_URL}/images/${description.image}`}
+                                                    alt={description.image} height={200} width="auto"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row">
                                         <div className="col-12">
                                             <h5>Mô Tả:</h5>
                                             <span className={hideText ? "" : "view-hide-text"} >{parse(description.description)}</span>

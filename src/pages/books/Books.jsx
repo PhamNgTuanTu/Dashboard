@@ -17,7 +17,7 @@ import View from './View';
 Books.propTypes = {};
 
 function Books(props) {
-    const nameTitleInitial = 'Sách';
+    const nameTitleInitial = 'Quản lý sách';
     const [, setDocTitle] = useDocTitle(nameTitleInitial);
 
     const dispatch = useDispatch();

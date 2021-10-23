@@ -3,14 +3,17 @@ import PrivateRoute from "./components/privateroute";
 import Author from "./pages/author/Author";
 import RouteBook from "./pages/books/RouteBook";
 import Category from "./pages/category/Category";
+import DisCount from './pages/discount/DisCount';
 import ErrorPage from "./pages/errorpage/ErrorPage";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Navbar from "./pages/navbar/Navbar";
+import Order from './pages/order/Order';
 import Products from "./pages/products/Products";
 import Publishers from "./pages/publishers/Publishers";
 import Suppliers from "./pages/suppliers/Suppliers";
 import Users from "./pages/users/Users";
+import WareHouse from "./pages/warehouse/Warehouse";
 
 
 const DefaultContainer = () => (
@@ -25,6 +28,9 @@ const DefaultContainer = () => (
       <PrivateRoute path="/users" component={Users} />
       <PrivateRoute path="/authors" component={Author} />
       <PrivateRoute path="/books" component={RouteBook} />
+      <PrivateRoute path="/warehouse" component={WareHouse} />
+      <PrivateRoute path="/discount" component={DisCount} />
+      <PrivateRoute path="/order" component={Order} />
       <PrivateRoute path="*" component={ErrorPage} />
     </Switch>
   </>

@@ -1,7 +1,8 @@
+import { ErrorMessage } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import Select from 'react-select';
+import { FormFeedback } from 'reactstrap';
 
 SelectField.propTypes = {
     field: PropTypes.object.isRequired,
@@ -18,13 +19,11 @@ SelectField.defaultProps = {
 }
 
 function SelectField(props) {
-    const { field, form, label, placeholder } = props;
+    const { field, form, label, placeholder , loading } = props;
     let { options } = props;
     const { name, value } = field;
     const { errors, touched } = form;
     const showError = errors[name] && touched[name];
-
-    const { loadingPage } = useSelector(state => state.select);
 
 
     // covert sang dạng value, label react-select
@@ -56,13 +55,13 @@ function SelectField(props) {
                 {...field}
                 value={selectedOption}
                 onChange={handleSelectedOptionChange}
-                isLoading={loadingPage ? true : false}
+                isLoading={loading}
                 options={options}
                 placeholder={placeholder}
                 isRequired
-                className={showError && "has-error"}
+                className={showError ? 'is-invalid has-error' : ''}
             />
-            {showError && <div className="show-error">{errors[name]}</div>}
+           <ErrorMessage name={name} component={FormFeedback} />
         </div>
     );
 }

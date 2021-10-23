@@ -3,7 +3,7 @@ import queryString from 'query-string';
 
 const getToken = async () => {
   const token = JSON.parse(localStorage.getItem('user'));
- return token;
+  return token;
 }
 // Set up default config for http requests here
 // Please have a look at here `https://github.com/axios/axios#request- config` for the full list of configs
@@ -27,10 +27,12 @@ axiosClient.interceptors.response.use((response) => {
   if (response && response.data) {
     return response.data;
   }
-
   return response;
 }, (error) => {
   // Handle errors
+  if (error.response.status === 401 && error.response.data.message === "Unauthenticated." ) {
+    localStorage.removeItem("user");
+  }
   throw error;
 });
 

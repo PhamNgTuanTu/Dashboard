@@ -18,7 +18,7 @@ import View from './View';
 Suppliers.propTypes = {};
 
 function Suppliers(props) {
-    const nameTitleInitial = 'Nhà Cung Cấp';
+    const nameTitleInitial = 'Quản lý nhà cung cấp';
     const [, setDocTitle] = useDocTitle(nameTitleInitial);
 
     const dispatch = useDispatch();

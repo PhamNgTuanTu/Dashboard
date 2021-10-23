@@ -3,11 +3,14 @@ import { combineReducers } from "redux";
 import user from "./user";
 import sidebar from "./sidebar";
 import category from "./category";
-import publisher from './publisher';
-import supplier from './supplier';
-import author from './author';
-import book from './book';
-import select from './select';
+import publisher from "./publisher";
+import supplier from "./supplier";
+import author from "./author";
+import book from "./book";
+import select from "./select";
+import warehouse from "./warehouse";
+import discount from "./discount";
+import orders from "./order";
 
 const reducer = combineReducers({
   user,
@@ -18,6 +21,9 @@ const reducer = combineReducers({
   author,
   book,
   select,
+  warehouse,
+  discount,
+  orders,
 });
 
 const store = configureStore({
