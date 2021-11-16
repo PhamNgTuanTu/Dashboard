@@ -11,6 +11,8 @@ import select from "./select";
 import warehouse from "./warehouse";
 import discount from "./discount";
 import orders from "./order";
+import home from "./home";
+import slider from "./slider";
 
 const reducer = combineReducers({
   user,
@@ -24,6 +26,8 @@ const reducer = combineReducers({
   warehouse,
   discount,
   orders,
+  home,
+  slider,
 });
 
 const store = configureStore({

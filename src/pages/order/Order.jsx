@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import filterFactory, {
   selectFilter,
-  textFilter
+  textFilter,
 } from "react-bootstrap-table2-filter";
 import paginationFactory, {
   PaginationListStandalone,
-  PaginationProvider
+  PaginationProvider,
 } from "react-bootstrap-table2-paginator";
 import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +22,7 @@ import {
   Row,
   TabContent,
   Table,
-  TabPane
+  TabPane,
 } from "reactstrap";
 import Swal from "sweetalert2";
 import orderApi from "../../api/orderApi";
@@ -39,29 +39,33 @@ import InputSearch from "../../components/search/inputSearch";
 import SelectSearch from "../../components/search/selectSearch";
 import { setDataOder, setLoadingData, setStatusOder } from "../../store/order";
 import View from "./ViewDetail";
+import warehouseApi from "../../api/warehouseApi";
+import { addWareHouse } from "../../store/warehouse";
 
 Order.propTypes = {};
 
 const optionTrangThai = [
-  { value: 0, label: "Đã hủy" },
+  { value: 0, label: "Người dùng hủy đơn" },
   { value: 1, label: "Chờ xác nhận" },
-  { value: 2, label: "Đã tiếp nhận" },
-  { value: 3, label: "Đang giao hàng" },
+  { value: 2, label: "Đã xác nhận" },
+  { value: 3, label: "Đang vận chuyển" },
   { value: 4, label: "Hoàn thành" },
   { value: 5, label: "Giao thất bại" },
+  { value: 6, label: "Quản trị viên hủy đơn" },
 ];
 
 const nameTabsHeader = [
   { id: 0, name: "Tất cả đơn", color: "#007bff" },
-  { id: 1, name: "Chờ xác nhận", color: "#17a2b8" },
-  { id: 2, name: "Đã xác nhận", color: "#28a745" },
-  { id: 3, name: "Đang giao hàng", color: "#6c757d" },
-  { id: 4, name: "Hoàn thành", color: "#28a745" },
-  { id: 5, name: "Giao thất bại", color: "#dc3545" },
+  { id: 1, name: "Chờ xác nhận", color: "#ffc107" },
+  { id: 2, name: "Đã xác nhận", color: "#17a2b8" },
+  { id: 3, name: "Đang vận chuyển", color: "#6c757d" },
+  { id: 4, name: "Đơn hoàn thành", color: "#28a745" },
+  { id: 5, name: "Đơn thất bại", color: "#dc3545" },
 ];
 
 let statusFilter = () => {};
 let nameFilter = () => {};
+let orderIdFilter = () => {};
 let phoneFilter = () => {};
 let emailFilter = () => {};
 
@@ -87,6 +91,7 @@ function Order(props) {
     phone: "",
     status: "",
     email: "",
+    order: "",
   });
 
   const [activeTab, setActiveTab] = useState(0);
@@ -123,7 +128,7 @@ function Order(props) {
 
   const defaultSorted = [
     {
-      dataField: "name",
+      dataField: `${Number("id")}`,
       order: "asc",
     },
   ];
@@ -145,6 +150,23 @@ function Order(props) {
   };
 
   const columnsOrder = [
+    {
+      text: "Mã hóa đơn",
+      dataField: "id",
+      sort: true,
+      formatter: (id, storeDataOrder) => (
+        <>
+          <p className="d-inline-block text-truncate mb-0">#{id}</p>
+        </>
+      ),
+      filter: textFilter({
+        getFilter: (filter) => {
+          orderIdFilter = filter;
+        },
+        style: { display: "none" },
+      }),
+      headerClasses: "table-light",
+    },
     {
       text: "Tên khách hàng",
       dataField: "name",
@@ -202,7 +224,12 @@ function Order(props) {
       sort: true,
       formatter: (total_payment, storeDataOrder) => (
         <>
-          <p className="d-inline-block text-truncate mb-0">{total_payment}</p>
+          <p className="d-inline-block text-truncate mb-0">
+            {Number(total_payment).toLocaleString("it-IT", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </p>
         </>
       ),
       headerClasses: "table-light",
@@ -213,11 +240,25 @@ function Order(props) {
       sort: true,
       formatter: (status, storeDataOrder) => (
         <>
-          {status === 1 ? <Badge color="primary">Chờ xác nhận</Badge> : null}
-          {status === 2 ? <Badge color="success">Đã xác nhận</Badge> : null}
-          {status === 3 ? <Badge color="light">Đang giao</Badge> : null}
-          {status === 4 ? <Badge color="success">Hoàn thành</Badge> : null}
-          {status === 5 ? <Badge color="danger">Giao thất bại</Badge> : null}
+          {Number(status) === 0 ? (
+            <Badge color="danger">Người dùng hủy đơn</Badge>
+          ) : null}
+          {Number(status) === 1 ? (
+            <Badge color="warning">Chờ xác nhận</Badge>
+          ) : null}
+          {Number(status) === 2 ? (
+            <Badge color="info">Đã xác nhận</Badge>
+          ) : null}
+          {Number(status) === 3 ? <Badge color="light">Đang giao</Badge> : null}
+          {Number(status) === 4 ? (
+            <Badge color="success">Hoàn thành</Badge>
+          ) : null}
+          {Number(status) === 5 ? (
+            <Badge color="danger">Giao thất bại</Badge>
+          ) : null}
+          {Number(status) === 6 ? (
+            <Badge color="danger">Quản trị viên hủy đơn</Badge>
+          ) : null}
         </>
       ),
       filter: selectFilter({
@@ -243,6 +284,68 @@ function Order(props) {
     return arr;
   };
 
+  const filterValueFalse = (data) => {
+    let arr = [];
+    if (data && JSON.stringify(data) !== "[]") {
+      data.forEach((val, i) => {
+        if (
+          Number(val.status) === 0 ||
+          Number(val.status) === 5 ||
+          Number(val.status) === 6
+        ) {
+          arr.push(val);
+        }
+      });
+    }
+    return arr;
+  };
+
+  const functionNhapKho = async (data, id, note) => {
+    if (JSON.stringify(data) !== "[]") {
+      let arrItems = [];
+      data.items.forEach((val) => {
+        arrItems.push({
+          book_id: val.book_id,
+          quantity: Number(val.quantity),
+          import_unit_price: Number(val.unit_price),
+        });
+      });
+      let arr = {
+        formality: 2,
+        supplier_id: "",
+        total: 0,
+        note: note,
+        items: arrItems,
+      };
+      try {
+        const res = await warehouseApi.addWare(arr);
+        dispatch(addWareHouse(res.data));
+      } catch (error) {}
+    }
+  };
+
+  const functionUpdateStatus = async (status, id) => {
+    setLoading(true);
+    try {
+      const response = await orderApi.editOrder({ status: Number(status) }, id);
+      dispatch(setStatusOder(Number(status), id));
+      setLoading(false);
+      modalSuccess(response.message);
+      setModal(false);
+    } catch (error) {
+      if (error.response.status === 422) {
+        modalError(error.response.data.message);
+        setLoading(false);
+        setModal(false);
+      }
+      if (error.response.status === 404) {
+        modalError(error.response.data.message);
+        setLoading(false);
+        setModal(false);
+      }
+    }
+  };
+
   const handleHuyDon = (id) => {
     Swal.fire({
       title: "Hủy đơn hàng",
@@ -255,29 +358,34 @@ function Order(props) {
       cancelButtonText: "Không",
     }).then((result) => {
       if (result.isConfirmed) {
-        setLoading(true);
-        orderApi
-          .editOrder({ status: 5 }, id)
-          .then((response) => {
-            if (response.success) {
-              dispatch(setStatusOder(5, id));
-              setLoading(false);
-              modalSuccess(response.message);
-              setModal(false);
-            }
-          })
-          .catch((error) => {
-            if (error.response.status === 422) {
-              modalError(error.response.data.message);
-              setLoading(false);
-              setModal(false);
-            }
-            if (error.response.status === 404) {
-              modalError(error.response.data.message);
-              setLoading(false);
-              setModal(false);
-            }
-          });
+        functionNhapKho(
+          arrChoose,
+          id,
+          `Trả hàng do hóa đơn #${id} bị hủy bởi quản trị viên !`
+        );
+        functionUpdateStatus(6, id);
+      }
+    });
+  };
+
+  const handleHuyDonShip = (id) => {
+    Swal.fire({
+      title: "Hủy đơn hàng",
+      text: "Xác nhận giao hàng thất bại ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Xác nhận",
+      cancelButtonText: "Không",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        functionNhapKho(
+          arrChoose,
+          id,
+          `Trả hàng do hóa đơn #${id} giao hàng thất bại !`
+        );
+        functionUpdateStatus(5, id);
       }
     });
   };
@@ -347,6 +455,7 @@ function Order(props) {
       nameFilter(params.name);
       phoneFilter(params.phone);
       emailFilter(params.email);
+      orderIdFilter(params.order);
     }
     // eslint-disable-next-line
   }, [params]);
@@ -362,6 +471,43 @@ function Order(props) {
       )}
       <section className="home-section">
         <BreadCrumb nameControl={nameTitleInitial} />
+        <div className="row">
+          <div className="col-6">
+            <Row>
+              <Col md="6">
+                <SelectSearch
+                  values={params}
+                  setValues={setParams}
+                  label="Lọc theo trạng thái"
+                  placeholder="Chọn trạng thái ..."
+                  name="status"
+                  options={covertArray(optionTrangThai)}
+                  getLabel={false}
+                />
+              </Col>
+              <Col md="6">
+                <InputSearch
+                  value={params}
+                  setValues={setParams}
+                  label="Mã hóa đơn"
+                  placeholder="#"
+                  name="order"
+                  type="text"
+                />
+              </Col>
+            </Row>
+          </div>
+          <Col md="6">
+            <InputSearch
+              value={params}
+              setValues={setParams}
+              label="Email"
+              placeholder="Nhập email..."
+              name="email"
+              type="text"
+            />
+          </Col>
+        </div>
         <Row>
           <Col md="6">
             <InputSearch
@@ -384,29 +530,7 @@ function Order(props) {
             />
           </Col>
         </Row>
-        <div className="row">
-          <Col md="6">
-            <InputSearch
-              value={params}
-              setValues={setParams}
-              label="Email"
-              placeholder="Nhập email..."
-              name="email"
-              type="text"
-            />
-          </Col>
-          <div className="col-6">
-            <SelectSearch
-              values={params}
-              setValues={setParams}
-              label="Lọc theo trạng thái"
-              placeholder="Chọn trạng thái ..."
-              name="status"
-              options={covertArray(optionTrangThai)}
-              getLabel={false}
-            />
-          </div>
-        </div>
+
         <div className="row">
           <div className="col-12">
             <div className="card">
@@ -621,7 +745,7 @@ function Order(props) {
                         </TabPane>
                         <TabPane tabId={5}>
                           <PaneTableGiaoThatBai
-                            value={filterValue(storeDataOrder, 5)}
+                            value={filterValueFalse(storeDataOrder)}
                             pageOptions={pageOptions}
                             defaultSorted={defaultSorted}
                             setArrChoose={setArrChoose}
@@ -643,6 +767,7 @@ function Order(props) {
         setModal={setModal}
         arrChoose={JSON.stringify(arrChoose) !== "null" ? arrChoose : null}
         onDeleteClick={handleHuyDon}
+        onDeleteClickShip={handleHuyDonShip}
         onUpdateClick={handleUpdateStatus}
       />
     </>

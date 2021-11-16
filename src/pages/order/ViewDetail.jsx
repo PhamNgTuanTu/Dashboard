@@ -19,13 +19,24 @@ View.defaultProps = {
 };
 
 function View(props) {
-  const { modal, setModal, arrChoose, onDeleteClick, onUpdateClick } = props;
+  const {
+    modal,
+    setModal,
+    arrChoose,
+    onDeleteClick,
+    onUpdateClick,
+    onDeleteClickShip,
+  } = props;
   const toggle = () => setModal(!modal);
 
   const handelDelete = (id) => {
     if (onDeleteClick) onDeleteClick(id);
   };
-  
+
+  const handelDeleteShip = (id) => {
+    if (onDeleteClickShip) onDeleteClickShip(id);
+  };
+
   const handleUpdateStatus = (id, status) => {
     if (onUpdateClick) onUpdateClick(id, status);
   };
@@ -63,29 +74,39 @@ function View(props) {
                 {arrChoose ? (
                   <tr>
                     <th scope="row">Trạng thái đơn</th>
-                    {arrChoose.status === 1 ? (
+                    {Number(arrChoose.status) === 1 ? (
                       <td>
-                        <Badge color="primary">Chờ xác nhận</Badge>
+                        <Badge color="warning">Chờ xác nhận</Badge>
                       </td>
                     ) : null}
-                    {arrChoose.status === 2 ? (
+                    {Number(arrChoose.status) === 2 ? (
                       <td>
-                        <Badge color="success">Đã xác nhận</Badge>
+                        <Badge color="info">Đã xác nhận</Badge>
                       </td>
                     ) : null}
-                    {arrChoose.status === 3 ? (
+                    {Number(arrChoose.status) === 3 ? (
                       <td>
-                        <Badge color="light">Đang giao</Badge>
+                        <Badge color="light">Đang vận chuyển</Badge>
                       </td>
                     ) : null}
-                    {arrChoose.status === 4 ? (
+                    {Number(arrChoose.status) === 4 ? (
                       <td>
                         <Badge color="success">Hoàn thành</Badge>
                       </td>
                     ) : null}
-                    {arrChoose.status === 5 ? (
+                    {Number(arrChoose.status) === 5 ? (
                       <td>
                         <Badge color="danger">Giao thất bại</Badge>
+                      </td>
+                    ) : null}
+                    {Number(arrChoose.status) === 6 ? (
+                      <td>
+                        <Badge color="danger">Quản trị viên hủy đơn</Badge>
+                      </td>
+                    ) : null}
+                    {Number(arrChoose.status) === 0 ? (
+                      <td>
+                        <Badge color="danger">Người dùng hủy đơn</Badge>
                       </td>
                     ) : null}
                   </tr>
@@ -100,10 +121,10 @@ function View(props) {
         </Row>
         <Row>
           <Col md="12">
-            <Table bordered hover>
+            <Table bordered hover responsive>
               <thead>
                 <tr>
-                  <th colSpan="5">Chi tiết đơn</th>
+                  <th colSpan="6">Chi tiết đơn</th>
                 </tr>
               </thead>
               <tbody>
@@ -113,22 +134,31 @@ function View(props) {
                   <th scope="row">Số lượng</th>
                   <th scope="row">Giá khuyến mãi</th>
                   <th scope="row">Giá gốc</th>
+                  <th scope="row">Tổng cộng</th>
                 </tr>
                 {arrChoose && typeof arrChoose.items !== "undefined"
                   ? arrChoose.items.map((val, i) => {
                       return (
                         <tr key={i}>
                           <th scope="row">{i + 1}</th>
-                          <td>{val.book}</td>
+                          <td style={{ minWidth : "200px" }}>{val.book}</td>
                           <td>{val.quantity}</td>
                           <td>
-                            {val.sale_price.toLocaleString("it-IT", {
+                            {Number(val.sale_price).toLocaleString("it-IT", {
                               style: "currency",
                               currency: "VND",
                             })}
                           </td>
                           <td>
-                            {val.unit_price.toLocaleString("it-IT", {
+                            {Number(val.unit_price).toLocaleString("it-IT", {
+                              style: "currency",
+                              currency: "VND",
+                            })}
+                          </td>
+                          <td>
+                            {(
+                              Number(val.sale_price) * Number(val.quantity)
+                            ).toLocaleString("it-IT", {
                               style: "currency",
                               currency: "VND",
                             })}
@@ -138,12 +168,12 @@ function View(props) {
                     })
                   : null}
                 <tr>
-                  <th scope="row" colSpan="4">
+                  <th scope="row" colSpan="5">
                     Phí vận chuyển
                   </th>
                   <td>
                     {arrChoose && typeof arrChoose.shipping_fee !== "undefined"
-                      ? arrChoose.shipping_fee.toLocaleString("it-IT", {
+                      ? Number(arrChoose.shipping_fee).toLocaleString("it-IT", {
                           style: "currency",
                           currency: "VND",
                         })
@@ -151,16 +181,22 @@ function View(props) {
                   </td>
                 </tr>
                 <tr>
-                  <th scope="row" colSpan="4">
-                    Tổng cộng
+                  <th scope="row" colSpan="5">
+                    Tổng thành tiền
                   </th>
                   <td>
-                    {arrChoose && typeof arrChoose.shipping_fee !== "undefined"
-                      ? arrChoose.total_payment.toLocaleString("it-IT", {
-                          style: "currency",
-                          currency: "VND",
-                        })
-                      : null}
+                    <h5>
+                      {arrChoose &&
+                      typeof arrChoose.shipping_fee !== "undefined"
+                        ? Number(arrChoose.total_payment).toLocaleString(
+                            "it-IT",
+                            {
+                              style: "currency",
+                              currency: "VND",
+                            }
+                          )
+                        : null}
+                    </h5>
                   </td>
                 </tr>
               </tbody>
@@ -173,7 +209,7 @@ function View(props) {
               md="12"
               className="d-flex align-items-center justify-content-end "
             >
-              {arrChoose.status === 5 || arrChoose.status === 4 ? null : (
+              {Number(arrChoose.status) === 2 ? (
                 <Button
                   color="danger"
                   className="mr-2"
@@ -181,8 +217,17 @@ function View(props) {
                 >
                   Hủy đơn hàng
                 </Button>
-              )}
-              {arrChoose.status === 1 ? (
+              ) : null}
+              {Number(arrChoose.status) === 3 ? (
+                <Button
+                  color="danger"
+                  className="mr-2"
+                  onClick={() => handelDeleteShip(arrChoose.id)}
+                >
+                  Giao hàng thất bại
+                </Button>
+              ) : null}
+              {Number(arrChoose.status) === 1 ? (
                 <Button
                   color="primary"
                   onClick={() => handleUpdateStatus(arrChoose.id, 2)}
@@ -190,7 +235,7 @@ function View(props) {
                   Tiếp nhận đơn hàng
                 </Button>
               ) : null}
-              {arrChoose.status === 2 ? (
+              {Number(arrChoose.status) === 2 ? (
                 <Button
                   color="primary"
                   onClick={() => handleUpdateStatus(arrChoose.id, 3)}
@@ -198,7 +243,7 @@ function View(props) {
                   Chuyển cho đơn vị vận chuyển
                 </Button>
               ) : null}
-              {arrChoose.status === 3 ? (
+              {Number(arrChoose.status) === 3 ? (
                 <Button
                   color="primary"
                   onClick={() => handleUpdateStatus(arrChoose.id, 4)}

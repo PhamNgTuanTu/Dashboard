@@ -8,15 +8,17 @@ InputFile.propTypes = {
   type: PropTypes.string,
   label: PropTypes.string,
   placeholder: PropTypes.string,
+  isLarge: PropTypes.bool,
 };
 InputFile.defaultProps = {
   type: "text",
   label: "",
   placeholder: "",
+  isLarge: false,
 };
 
 function InputFile(props) {
-  const { field, form, label, type } = props;
+  const { field, form, label, type, isLarge } = props;
   const { name, value } = field;
 
   //validation
@@ -85,7 +87,7 @@ function InputFile(props) {
   };
 
   return (
-    <div className={"col-md-6 col-md-offset-3 center"}>
+    <div className={isLarge ? "col-md-12" : "col-md-6 col-md-offset-3 center"}>
       <div className="form-group mb-0">
         {label && <label htmlFor={name}>{label}</label>}
         <input
@@ -102,7 +104,14 @@ function InputFile(props) {
         className={showError ? "has-error-file control-input" : "control-input"}
         onClick={onButtonClick}
       >
-        <div className={`imgupload${name}`}>
+        <div
+          className={`imgupload${name}`}
+          style={
+            isLarge
+              ? { display: "flex", justifyContent: "center", margin: "20px 0" }
+              : null
+          }
+        >
           <i className="bx bxs-file-image"></i>
         </div>
         <div className={`imgupload${name} ok mt-3 mb-3`} id="showImage">
@@ -115,8 +124,8 @@ function InputFile(props) {
           ) : (
             files.map((item, index) => {
               return (
-                <div key={index}>
-                  <img src={item.url} alt="" height="200" />
+                <div key={index} className={isLarge ? "d-flex align-items-center justify-content-center" : ""}>
+                  <img src={item.url} alt="" height="200" style={isLarge ? {width : "max-content"} : null}/>
                 </div>
               );
             })

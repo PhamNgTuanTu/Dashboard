@@ -11,6 +11,7 @@ import Navbar from "./pages/navbar/Navbar";
 import Order from './pages/order/Order';
 import Products from "./pages/products/Products";
 import Publishers from "./pages/publishers/Publishers";
+import Slider from './pages/slider/Slider';
 import Suppliers from "./pages/suppliers/Suppliers";
 import Users from "./pages/users/Users";
 import WareHouse from "./pages/warehouse/Warehouse";
@@ -31,6 +32,7 @@ const DefaultContainer = () => (
       <PrivateRoute path="/warehouse" component={WareHouse} />
       <PrivateRoute path="/discount" component={DisCount} />
       <PrivateRoute path="/order" component={Order} />
+      <PrivateRoute path="/slider" component={Slider} />
       <PrivateRoute path="*" component={ErrorPage} />
     </Switch>
   </>

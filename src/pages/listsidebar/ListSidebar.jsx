@@ -6,7 +6,7 @@ import Sidebar from '../../components/sidebar/Sidebar';
 
 function ListSidebar({openMenu}) {
     return (
-        <ul className="nav-list">
+        <ul className="nav-list overflow-nav-menu">
             <Search openMenu={() => openMenu(true)}/>
             <Sidebar />
             <Profile />

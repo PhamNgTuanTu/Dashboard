@@ -59,6 +59,12 @@ const initialSidebar = [
         to: '/discount',
         exact: false,
         icon: "bx bxs-discount",
+    },
+    {
+        name: 'Slider',
+        to: '/slider',
+        exact: false,
+        icon: "bx bx-slider",
     }
 ];
 const slice = createSlice({

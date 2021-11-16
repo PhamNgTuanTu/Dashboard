@@ -73,7 +73,7 @@ function AddEdit(props) {
                 return (
                   <Form>
                     <Row>
-                      <Col md="6">
+                      <Col md="12">
                         <FastField
                           name="name"
                           component={InputFieldBootstrap}
@@ -83,12 +83,15 @@ function AddEdit(props) {
                           autoFocus={true}
                         />
                       </Col>
+                    </Row>
+                    <Row>
                       <Field
                         name="image"
                         component={InputFile}
                         label="Ảnh tác giả"
                         placeholder="Vui lòng chọn tệp (jpg,jpeg,png)"
                         type="file"
+                        isLarge={true}
                       />
                     </Row>
                     <Row>

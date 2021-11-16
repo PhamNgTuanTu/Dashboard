@@ -36,6 +36,7 @@ function Table(props) {
     if (onViewClick) onViewClick(ware);
   };
 
+  warehouse.sort((a, b) => b.id - a.id);
 
   //search
   if (params.status !== "") {
@@ -116,7 +117,7 @@ function Table(props) {
               <tr key={index}>
                 <th scope="row">{index + 1}</th>
                 <td>
-                  {ware.formality === 1 ? (
+                  {Number(ware.formality) === 1 ? (
                     <Badge color="primary">Nhập mới</Badge>
                   ) : (
                     <Badge color="secondary">Trả hàng</Badge>
@@ -125,23 +126,23 @@ function Table(props) {
                 <td>{ware.by_admin}</td>
                 <td>{ware.supplier}</td>
                 <td>
-                  {ware.total.toLocaleString("it-IT", {
+                  {Number(ware.total).toLocaleString("it-IT", {
                     style: "currency",
                     currency: "VND",
                   })}
                 </td>
                 <td>
-                  {ware.status === 1 ? (
+                  {Number(ware.status) === 1 ? (
                     <Badge color="success">Đã nhập kho</Badge>
                   ) : (
                     <Badge color="light">Đã hủy</Badge>
                   )}
                 </td>
-                <td>
+                <td className="min-width-170">
                   <button
                     onClick={() => handleRemoveClick(ware.id)}
                     type="button"
-                    disabled={ware.status === 1 ? false : true}
+                    disabled={Number(ware.status) === 1 ? false : true}
                     className="btn btn-danger mr-2"
                   >
                     <i className="bx bx-trash"></i>
@@ -156,7 +157,7 @@ function Table(props) {
                   <button
                     onClick={() => handleEditClick(ware.id)}
                     type="button"
-                    disabled={ware.status === 1 ? true : false}
+                    disabled={Number(ware.status) === 1 ? true : false}
                     className="btn btn-success"
                   >
                     <i className="bx bx-reset"></i>
