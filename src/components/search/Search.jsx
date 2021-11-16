@@ -8,7 +8,7 @@ function Search(props) {
         ref.current.focus();
     }
     return (
-        <li>
+        <li className="d-none">
             <i className="bx bx-search" onClick={openMenu} />
             <input ref={ref} type="text" placeholder="Search..." autoFocus />
             <span className="tooltip">Search</span>

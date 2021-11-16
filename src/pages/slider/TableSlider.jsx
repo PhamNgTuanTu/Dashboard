@@ -1,13 +1,14 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { useSelector } from "react-redux";
-import { Badge } from "reactstrap";
+import moment from "moment";
+
 
 Table.propTypes = {
   onRemoveClick: PropTypes.func,
   onEditClick: PropTypes.func,
   searchValue: PropTypes.string,
-  discount: PropTypes.array,
+  suppliers: PropTypes.array,
   onViewClick: PropTypes.func,
 };
 
@@ -15,35 +16,40 @@ Table.defaultProps = {
   onRemoveClick: null,
   onEditClick: null,
   searchValue: "",
-  discount: null,
+  suppliers: null,
   onViewClick: null,
 };
 
 function Table(props) {
-  let { discount, params } = props;
+  let { slider } = props;
 
-  const { loadingPage } = useSelector((state) => state.discount);
+  slider.sort((a, b) => b.id - a.id);
 
-  const { onRemoveClick, onEditClick } = props;
+  const { loadingPage } = useSelector((state) => state.slider);
 
-  const handleRemoveClick = (dis) => {
-    if (onRemoveClick) onRemoveClick(dis);
+  const { onRemoveClick, onEditClick, searchValue } = props;
+
+  const handleRemoveClick = (supplier) => {
+    if (onRemoveClick) onRemoveClick(supplier);
   };
-  const handleEditClick = (dis) => {
-    if (onEditClick) onEditClick(dis);
+  const handleEditClick = (supplier) => {
+    if (onEditClick) onEditClick(supplier);
   };
-
-  discount.sort((a, b) => b.id - a.id);
 
   //search
-  if (params.name !== "") {
-    discount = discount.filter((i) => {
-      return i.book.name === params.name;
+  if (searchValue.length > 0) {
+    slider = slider.filter((i) => {
+      return i.book.name.toLowerCase().match(searchValue.toLowerCase());
     });
   }
 
+  const formatDate = (date) => {
+    let dateResult = moment(date, "YYYY-MM-DD");
+    return dateResult.format("DD/MM/YYYY");
+  };
+
   return (
-    <>
+    <div className="table-responsive">
       {loadingPage ? (
         <table className="tg">
           <tbody>
@@ -63,8 +69,14 @@ function Table(props) {
               <th className="tg-cly1">
                 <div className="line" />
               </th>
+              <th className="tg-cly1">
+                <div className="line" />
+              </th>
             </tr>
             <tr>
+              <td className="tg-cly1">
+                <div className="line" />
+              </td>
               <td className="tg-cly1">
                 <div className="line" />
               </td>
@@ -91,37 +103,42 @@ function Table(props) {
           <tr>
             <th scope="col">#</th>
             <th scope="col">Tên sách</th>
-            <th scope="col">Mức giảm giá</th>
-            <th scope="col">Số lượng sách còn lại</th>
+            <th scope="col">Ngày bắt đầu khuyến mãi</th>
+            <th scope="col">Ngày kết thúc khuyến mãi</th>
+            <th scope="col">Hình ảnh</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          {discount.map((dis, index) => {
+          {slider.map((slider, index) => {
             return (
               <tr key={index}>
                 <th scope="row">{index + 1}</th>
-                <td>{dis.book.name}</td>
+                <td>{slider.book.name}</td>
+                <td>{formatDate(slider.start_date)}</td>
+                <td>{formatDate(slider.end_date)}</td>
                 <td>
-                  <Badge color="primary">{dis.percent}%</Badge>
+                  <img
+                    src={`${process.env.REACT_APP_API_URL}/images/${slider.image}`}
+                    alt="Đang tải ..."
+                    height={100}
+                    width="auto"
+                  />
                 </td>
-                <td>{dis.quantity}</td>
                 <td className="min-width-170">
                   <button
-                    onClick={() => handleRemoveClick(dis.id)}
+                    onClick={() => handleEditClick(slider.id)}
                     type="button"
-                    disabled={false}
+                    className="btn btn-success mr-2"
+                  >
+                    <i className="bx bxs-edit"></i>
+                  </button>
+                  <button
+                    onClick={() => handleRemoveClick(slider.id)}
+                    type="button"
                     className="btn btn-danger mr-2"
                   >
                     <i className="bx bx-trash"></i>
-                  </button>
-                  <button
-                    onClick={() => handleEditClick(dis.id)}
-                    type="button"
-                    disabled={false}
-                    className="btn btn-success"
-                  >
-                    <i className="bx bx-edit"></i>
                   </button>
                 </td>
               </tr>
@@ -129,7 +146,7 @@ function Table(props) {
           })}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
 

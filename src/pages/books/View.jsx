@@ -49,7 +49,7 @@ function View(props) {
                                             <p>Đơn Giá:</p>
                                         </div>
                                         <div className="col-8">
-                                            <p>{arrInfoBook.unit_price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}.</p>
+                                            <p>{Number(arrInfoBook.unit_price).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}.</p>
                                         </div>
                                     </div>
                                     <div className="row">

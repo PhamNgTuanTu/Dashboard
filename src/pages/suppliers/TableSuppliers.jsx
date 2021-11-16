@@ -36,6 +36,8 @@ function Table(props) {
         if (onViewClick) onViewClick(author)
     }
 
+    suppliers.sort((a, b) => b.id - a.id);
+
     //search
     if (searchValue.length > 0) {
         suppliers = suppliers.filter((i) => {

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
-import authorApi from "../../api/authorApi";
+import bookApi from "../../api/bookApi";
 import imageApi from "../../api/imageApi";
+import sliderApi from "../../api/sliderApi";
 import BreadCrumb from "../../components/breadcrumb/BreadCrumb";
 import { GetPageFromUrl } from "../../components/convert-url/GetPageFromUrl";
 import { useDocTitle } from "../../components/custom-title-page/CustomTitlePage";
@@ -12,58 +13,74 @@ import modalSuccess from "../../components/modal/Success";
 import Pagination from "../../components/paginate/Pagination";
 import Search from "../../components/search/SearchTable";
 import {
-  addAuthor,
-  editAuthor,
-  removeAuthor,
-  setDataAuthor,
+  setDataBook,
+  setLoadingData as setLoadingDataBook,
+} from "../../store/book";
+import {
+  addSliderNha,
+  editSliderNha,
+  setDataSlider,
   setLoadingData,
-  setPageAuthor,
-} from "../../store/author";
+  setPageSlider,
+  removeSliderNha,
+} from "../../store/slider";
 import AddEdit from "./AddEdit";
-import Table from "./TableAuthor";
-import View from "./View";
+import Table from "./TableSlider";
 
-Author.propTypes = {};
+Slider.propTypes = {};
 
-function Author(props) {
-  const nameTitleInitial = "Quản lý tác Giả";
+function Slider(props) {
+  const nameTitleInitial = "Quản lý slider";
   const [, setDocTitle] = useDocTitle(nameTitleInitial);
 
   const dispatch = useDispatch();
-  const [Loading, setLoading] = useState(false);
+
+  let { storeBook, storeSlider, storePageSlider, loadingSlider, loadingBooks } =
+    useSelector((state) => ({
+      storeBook: state.book.books,
+      storeSlider: state.slider.sliders,
+      storePageSlider: state.slider.page,
+      loadingSlider: state.slider.loadingPage,
+      loadingBooks: state.book.loadingPage,
+    }));
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  //mở modal
+  const [modal, setModal] = useState(false);
 
-  // id author edit
+  // id sliders edit
   const [idEdit, setIdEdit] = useState();
-
-  //lấy danh sách tác giả từ store
-  const { authors } = useSelector((state) => state.author);
-
-  // loading
-  const { loadingPage } = useSelector((state) => state.author);
 
   // kiểm tra tính năng add hay edit
   const [isAddMode, setIsAddMode] = useState(true);
 
   // lấy id từ button edit
-  const authorsEdit = authors.find((x) => x.id === idEdit);
+  const slidersEdit = storeSlider.find((x) => x.id === idEdit);
 
   // giá trị ban đầu của form
   let initialValues = isAddMode
     ? {
         name: "",
-        description: "",
+        start_date: "",
+        end_date: "",
+        book_id: "",
         image: "",
       }
-    : authorsEdit;
-
+    : {
+        name: slidersEdit.name,
+        start_date: slidersEdit.start_date,
+        end_date: slidersEdit.end_date,
+        book_id: Number(slidersEdit.book.id),
+        image: slidersEdit.image,
+      };
   // nếu xóa thì initialValues trả giá trị mặc định
   if (initialValues) {
   } else {
     initialValues = {
       name: "",
-      description: "",
+      start_date: "",
+      end_date: "",
+      book_id: "",
       image: "",
     };
   }
@@ -71,26 +88,32 @@ function Author(props) {
   // lấy numberPage trên url
   const location = useLocation();
 
-  //lấy ra số page từ store
-  const { page } = useSelector((state) => state.author);
-
   //paginate
-  let [PageSize, setPageSize] = useState(page);
+  let [PageSize, setPageSize] = useState(storePageSlider);
   const [currentPage, setCurrentPage] = useState(1);
   const firstPageIndex = (currentPage - 1) * PageSize;
   const lastPageIndex = firstPageIndex + PageSize;
-  const currentItems = authors.slice(firstPageIndex, lastPageIndex);
+  const currentItems = storeSlider.slice(firstPageIndex, lastPageIndex);
 
   //get page từ url
   const pageFromUrl = GetPageFromUrl(location.search);
+
+  //open moadal
+  const openModal = () => {
+    setModal(!modal);
+    setIsAddMode(true);
+  };
 
   //load data lên store
   useEffect(() => {
     async function LoadData() {
       try {
-        const response = await authorApi.getAll();
-        dispatch(setDataAuthor(response.data));
+        const response = await sliderApi.getAll();
+        const books = await bookApi.getAll();
+        dispatch(setDataSlider(response.data));
         dispatch(setLoadingData(false));
+        dispatch(setDataBook(books.data));
+        dispatch(setLoadingDataBook(false));
         if (pageFromUrl !== undefined) {
           setCurrentPage(Number(pageFromUrl));
           setDocTitle(`Trang ${pageFromUrl} - ${nameTitleInitial}`);
@@ -103,23 +126,15 @@ function Author(props) {
     // eslint-disable-next-line
   }, []);
 
-  //open moadal
-  const openModal = () => {
-    window.$("#addAndEditAuthor").modal("show");
-    setIsAddMode(true);
-  };
-
   const isFile = (input) => "File" in window && input instanceof File;
 
-  // submit data add and edit suppliers
-  const onSubmit = async (values, { resetForm }) => {
-    setLoading(true);
+  const onSubmit = async (values) => {
     if (isAddMode) {
       try {
-        let Image = "";
+        let imageSlider = "";
         try {
-          let resImage = await imageApi.addImageApi(values.image, 2);
-          Image = resImage.data;
+          let resImage = await imageApi.addImageApi(values.image, 4);
+          imageSlider = resImage.data;
         } catch (error) {
           if (error.response.status === 422) {
             modalError(error.response.data.errors["image"]);
@@ -127,74 +142,76 @@ function Author(props) {
         }
         let arr = {
           name: values.name,
-          image: Image,
-          description: values.description,
+          start_date: values.start_date,
+          end_date: values.end_date,
+          book_id: values.book_id,
+          image: imageSlider,
         };
-        const response = await authorApi.addAuthorApi(arr);
-        setLoading(false);
-        dispatch(addAuthor(response.data));
-        resetForm(initialValues);
-        modalSuccess(response.message);
-        window.$("#addAndEditAuthor").modal("hide");
+        const res = await sliderApi.addSlider(arr);
+        dispatch(addSliderNha(res.data));
+        modalSuccess(res.message);
+        setModal(false);
       } catch (error) {
         if (error.response.status === 422) {
-          const arrError = Object.keys(initialValues);
-          for (let i = 0; i < arrError.length; i++) {
-            if (error.response.data.errors[`${arrError[i]}`]) {
-              modalError(error.response.data.errors[`${arrError[i]}`]);
-              setLoading(false);
+          if (error.response.data.errors["book_id"]) {
+            modalError("Sách đã tồn tại slide");
+          } else {
+            const arrError = Object.keys(initialValues);
+            for (let i = 0; i < arrError.length; i++) {
+              if (error.response.data.errors[`${arrError[i]}`]) {
+                modalError(error.response.data.errors[`${arrError[i]}`]);
+              }
             }
           }
         }
         if (error.response.status === 500) {
           modalError(error.response.data.message);
-          setLoading(false);
         }
       }
     } else {
       try {
-        let ImageForm = "";
+        let imageSlider = "";
         if (isFile(values.image)) {
           try {
-            let resImage = await imageApi.addImageApi(values.image, 2);
-            ImageForm = resImage.data;
+            let resImage = await imageApi.addImageApi(values.image, 4);
+            imageSlider = resImage.data;
           } catch (error) {
             if (error.response.status === 422) {
               modalError(error.response.data.errors["image"]);
             }
           }
         } else {
-          ImageForm = values.image;
+          imageSlider = values.image;
         }
+
         let arr = {
           name: values.name,
-          image: ImageForm,
-          description: values.description,
+          start_date: values.start_date,
+          end_date: values.end_date,
+          book_id: values.book_id,
+          image: imageSlider,
         };
-        const response = await authorApi.editAuthorApi(arr, idEdit);
-        dispatch(editAuthor(response.data));
-        setLoading(false);
-        modalSuccess(response.message);
-        window.$("#addAndEditAuthor").modal("hide");
+        const res = await sliderApi.editSlider(arr, idEdit);
+        dispatch(editSliderNha(res.data));
+        modalSuccess(res.message);
+        setModal(false);
       } catch (error) {
         if (error.response.status === 422) {
           const arrError = Object.keys(initialValues);
           for (let i = 0; i < arrError.length; i++) {
             if (error.response.data.errors[`${arrError[i]}`]) {
               modalError(error.response.data.errors[`${arrError[i]}`]);
-              setLoading(false);
             }
           }
         }
         if (error.response.status === 500) {
           modalError(error.response.data.message);
-          setLoading(false);
         }
       }
     }
   };
 
-  //xóa author
+  //xóa suppliers
   const handleRemoveClick = (id) => {
     Swal.fire({
       title: "Bạn có chắc muốn xóa ?",
@@ -208,11 +225,11 @@ function Author(props) {
     }).then((result) => {
       if (result.isConfirmed) {
         setLoadingDelete(true);
-        authorApi
-          .removeAuthorApi(id)
+        sliderApi
+          .removeSlider(id)
           .then((response) => {
             if (response.status === 204) {
-              dispatch(removeAuthor(id));
+              dispatch(removeSliderNha(id));
               setLoadingDelete(false);
               modalSuccess("Xóa Thành Công !");
             }
@@ -233,7 +250,7 @@ function Author(props) {
 
   // mở modal lên sau đó load data
   const handleEditClick = (id) => {
-    window.$("#addAndEditAuthor").modal("show");
+    setModal(!modal);
     setIsAddMode(false);
     setIdEdit(id);
   };
@@ -248,22 +265,9 @@ function Author(props) {
   const selectItem = [3, 5, 10, 20, 50];
   const handleAddrTypeChange = (e) => {
     setPageSize(Number(e.target.value));
-    dispatch(setPageAuthor(Number(e.target.value)));
+    dispatch(setPageSlider(Number(e.target.value)));
   };
 
-  const [description, setDescription] = useState();
-  const [hideText, setHideText] = useState(false);
-
-  const handleViewClick = (id) => {
-    const authorsView = authors.find((x) => x.id === id);
-    setDescription(authorsView);
-    setHideText(false);
-    window.$("#viewInfoAuthor").modal("show");
-  };
-
-  const handelView = () => {
-    setHideText(!hideText);
-  };
   return (
     <>
       {loadingDelete ? (
@@ -280,7 +284,7 @@ function Author(props) {
             <Search
               handleSearchChange={handleSearchChange}
               searchValue={searchValue}
-              SearchCaption={"tác giả"}
+              SearchCaption={"sách"}
             />
           </div>
           <div className="col-6">
@@ -312,16 +316,15 @@ function Author(props) {
                   className="btn btn-primary"
                   onClick={openModal}
                 >
-                  Thêm Tác Giả
+                  Thêm slide
                 </button>
               </div>
               <div className="tableWrapper card-content">
                 <Table
                   onRemoveClick={handleRemoveClick}
                   onEditClick={handleEditClick}
-                  onViewClick={handleViewClick}
                   searchValue={searchValue}
-                  authors={currentItems}
+                  slider={currentItems}
                 />
               </div>
             </div>
@@ -329,10 +332,10 @@ function Author(props) {
         </div>
         <div className="row">
           <div className="col-12">
-            {loadingPage ? null : (
+            {loadingSlider ? null : (
               <Pagination
                 currentPage={currentPage}
-                totalCount={authors.length}
+                totalCount={storeSlider.length}
                 pageSize={PageSize}
                 onPageChange={(page) => setCurrentPage(page)}
                 title={nameTitleInitial}
@@ -345,16 +348,14 @@ function Author(props) {
       <AddEdit
         onSubmit={onSubmit}
         initialValues={initialValues}
-        isLoading={Loading}
         isAddMode={isAddMode}
-      />
-      <View
-        description={description}
-        handelView={handelView}
-        hideText={hideText}
+        modal={modal}
+        setModal={setModal}
+        books={storeBook}
+        loadingBook={loadingBooks}
       />
     </>
   );
 }
 
-export default Author;
+export default Slider;

@@ -66,7 +66,7 @@ function AddEdit(props) {
                     <Field
                       name="book_id"
                       component={SelectField}
-                      label="Chọn Sách tạo giảm gá"
+                      label="Chọn Sách tạo giảm giá"
                       placeholder="Chọn sách ... "
                       options={getArrBooks(books)}
                       loading={loadingBook}

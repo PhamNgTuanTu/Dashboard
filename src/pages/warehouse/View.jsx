@@ -52,7 +52,7 @@ function View(props) {
                         <td>Hình Thức :</td>
                         <td colSpan="3">
                           <strong>
-                            {data.formality === 1 ? "Nhập hàng" : "Đổi trả"}
+                            {Number(data.formality) === 1 ? "Nhập mới" : "Đổi trả"}
                           </strong>
                         </td>
                       </tr>
@@ -60,7 +60,7 @@ function View(props) {
                         <td>Trạng thái :</td>
                         <td colSpan="3">
                           <strong>
-                            {data.status === 1 ? "Đã nhập kho" : "Đã hủy"}
+                            {Number(data.status) === 1 ? "Đã nhập kho" : "Đã hủy"}
                           </strong>
                         </td>
                       </tr>
@@ -71,7 +71,7 @@ function View(props) {
                       <tr>
                         <td>Tổng tiền nhập :</td>
                         <td colSpan="3">
-                          {data.total.toLocaleString("it-IT", {
+                          {Number(data.total).toLocaleString("it-IT", {
                             style: "currency",
                             currency: "VND",
                           })}

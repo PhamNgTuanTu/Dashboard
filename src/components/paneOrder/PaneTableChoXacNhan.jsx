@@ -14,18 +14,20 @@ import filterFactory, {
 PaneTableChoXacNhan.propTypes = {};
 
 const optionTrangThai = [
-  { value: 0, label: "Đã hủy" },
+  { value: 0, label: "Người dùng hủy đơn" },
   { value: 1, label: "Chờ xác nhận" },
-  { value: 2, label: "Đã tiếp nhận" },
-  { value: 3, label: "Đang giao hàng" },
+  { value: 2, label: "Đã xác nhận" },
+  { value: 3, label: "Đang vận chuyển" },
   { value: 4, label: "Hoàn thành" },
   { value: 5, label: "Giao thất bại" },
+  { value: 6, label: "Quản trị viên hủy đơn" },
 ];
 
 let statusFilterChoXacNhan = () => {};
 let nameFilterChoXacNhan = () => {};
 let phoneFilterChoXacNhan = () => {};
 let emailFilterChoXacNhan = () => {};
+let orderIdFilter = () => {};
 
 function PaneTableChoXacNhan(props) {
   let { value, defaultSorted, setArrChoose, setModal, params } = props;
@@ -48,6 +50,23 @@ function PaneTableChoXacNhan(props) {
   };
 
   const columnsOrderPane = [
+    {
+      text: "Mã hóa đơn",
+      dataField: "id",
+      sort: true,
+      formatter: (id, storeDataOrder) => (
+        <>
+          <p className="d-inline-block text-truncate mb-0">#{id}</p>
+        </>
+      ),
+      filter: textFilter({
+        getFilter: (filter) => {
+          orderIdFilter = filter;
+        },
+        style: { display: "none" },
+      }),
+      headerClasses: "table-light",
+    },
     {
       text: "Tên khách hàng",
       dataField: "name",
@@ -105,7 +124,12 @@ function PaneTableChoXacNhan(props) {
       sort: true,
       formatter: (total_payment, storeDataOrder) => (
         <>
-          <p className="d-inline-block text-truncate mb-0">{total_payment}</p>
+          <p className="d-inline-block text-truncate mb-0">
+            {Number(total_payment).toLocaleString("it-IT", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </p>
         </>
       ),
       headerClasses: "table-light",
@@ -116,11 +140,7 @@ function PaneTableChoXacNhan(props) {
       sort: true,
       formatter: (status, storeDataOrder) => (
         <>
-          {status === 1 ? <Badge color="primary">Chờ xác nhận</Badge> : null}
-          {status === 2 ? <Badge color="success">Đã xác nhận</Badge> : null}
-          {status === 3 ? <Badge color="light">Đang giao</Badge> : null}
-          {status === 4 ? <Badge color="success">Hoàn thành</Badge> : null}
-          {status === 5 ? <Badge color="danger">Giao thất bại</Badge> : null}
+          {Number(status) === 1 ? <Badge color="warning">Chờ xác nhận</Badge> : null}
         </>
       ),
       filter: selectFilter({
@@ -140,6 +160,7 @@ function PaneTableChoXacNhan(props) {
       nameFilterChoXacNhan(params.name);
       phoneFilterChoXacNhan(params.phone);
       emailFilterChoXacNhan(params.email);
+      orderIdFilter(params.order);
     }
     // eslint-disable-next-line
   }, [params]);
@@ -206,38 +227,9 @@ function PaneTableChoXacNhan(props) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-              </tr>
-              <tr>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
-                </td>
-                <td className="tg-cly1">
-                  <div className="line" />
+            <tr>
+                <td colSpan="5" style={{ textAlign: "center" }}>
+                  Không có đơn hàng loại này.
                 </td>
               </tr>
             </tbody>

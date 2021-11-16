@@ -36,6 +36,8 @@ function Table(props) {
         if (onViewClick) onViewClick(author)
     }
 
+    authors.sort((a, b) => b.id - a.id);
+
     //search
     if (searchValue.length > 0) {
         authors = authors.filter((i) => {
@@ -101,7 +103,7 @@ function Table(props) {
                                     <tr key={index}>
                                         <th scope="row">{index + 1}</th>
                                         <td >{author.name}</td>
-                                        <td >
+                                        <td className="min-width-170">
                                             <button onClick={() => handleEditClick(author.id)}
                                                 type="button"
                                                 className="btn btn-success mr-2"

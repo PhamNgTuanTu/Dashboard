@@ -184,6 +184,10 @@ function Category(props) {
                             modalError(error.response.data.message);
                             setLoadingDelete(false)
                         }
+                        if (error.response.status === 409) {
+                            modalError(error.response.data.message);
+                            setLoadingDelete(false);
+                          }
                     })
             }
         })

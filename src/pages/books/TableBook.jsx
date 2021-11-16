@@ -34,6 +34,8 @@ function Table(props) {
     if (onViewClick) onViewClick(book);
   };
 
+  books.sort((a, b) => b.id - a.id);
+
   //search
   if (searchValue.length > 0) {
     books = books.filter((i) => {
@@ -130,7 +132,7 @@ function Table(props) {
                   )}
                 </td>
                 <td>
-                  {book.unit_price.toLocaleString("vi-VN", {
+                  {Number(book.unit_price).toLocaleString("it-IT", {
                     style: "currency",
                     currency: "VND",
                   })}
@@ -138,7 +140,7 @@ function Table(props) {
                 <td>{book.quantity}</td>
                 <td>{book.category.name}</td>
                 <td>{book.author.name}</td>
-                <td>
+                <td className="min-width-170">
                   <button
                     onClick={() => handleEditClick(book.id)}
                     type="button"

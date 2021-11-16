@@ -229,6 +229,10 @@ function DisCount(props) {
                         modalError(error.response.data.message);
                         setLoading(false)
                     }
+                    if (error.response.status === 409) {
+                      modalError(error.response.data.message);
+                      setLoading(false);
+                    }
                 })
         }
     })

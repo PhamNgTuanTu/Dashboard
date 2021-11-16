@@ -18,7 +18,7 @@ function Navbar(props) {
             <div className={openSideBar ? "sidebar open" : "sidebar"}>
                 <div className="logo-details">
                     <i className='bx bx-book-alt icon'></i>
-                    <div className="logo_name">Bủh.io</div>
+                    <div className="logo_name">StaciaBook</div>
                     <i className={openSideBar ? "bx bx-menu-alt-right bx-md" : "bx bx-menu bx-md"} id="btn" onClick={openNavBar} />
                 </div>
                 <ListSidebar openMenu={openMenu}/>

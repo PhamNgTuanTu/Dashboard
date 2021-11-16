@@ -35,6 +35,7 @@ function Table(props) {
     const handleViewClick = (author) => {
         if (onViewClick) onViewClick(author)
     }
+    publisher.sort((a, b) => b.id - a.id);
 
     //search
     if (searchValue.length > 0) {
