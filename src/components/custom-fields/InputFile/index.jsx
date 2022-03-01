@@ -112,20 +112,41 @@ function InputFile(props) {
               : null
           }
         >
-          <i className="bx bxs-file-image"></i>
+          {value && value.constructor === String ? null : (
+            <i className="bx bxs-file-image"></i>
+          )}
         </div>
         <div className={`imgupload${name} ok mt-3 mb-3`} id="showImage">
+          <div className="d-flex align-items-center justify-content-center">
+            {isLarge && !value ? (
+              <i className="bx bxs-file-image" style={{ color: "#000" }}></i>
+            ) : null}
+          </div>
           {value && value.constructor === String ? (
-            <img
-              src={`${process.env.REACT_APP_API_URL}/images/${value}`}
-              height="200"
-              alt=""
-            />
+            <div className="d-flex align-items-center justify-content-center">
+              <img
+                src={`${process.env.REACT_APP_API_URL}/images/${value}`}
+                height="200"
+                alt=""
+              />
+            </div>
           ) : (
             files.map((item, index) => {
               return (
-                <div key={index} className={isLarge ? "d-flex align-items-center justify-content-center" : ""}>
-                  <img src={item.url} alt="" height="200" style={isLarge ? {width : "max-content"} : null}/>
+                <div
+                  key={index}
+                  className={
+                    isLarge
+                      ? "d-flex align-items-center justify-content-center"
+                      : ""
+                  }
+                >
+                  <img
+                    src={item.url}
+                    alt=""
+                    height="200"
+                    style={isLarge ? { width: "max-content" } : null}
+                  />
                 </div>
               );
             })
@@ -134,7 +155,6 @@ function InputFile(props) {
         <div className={`imgupload${name} stop`}>
           <i className="bx bx-x"></i>
         </div>
-        {/* <p id={`img${name}`}>{placeholder}</p> */}
       </div>
       {showError && <div className="show-error">{errors[name]}</div>}
     </div>

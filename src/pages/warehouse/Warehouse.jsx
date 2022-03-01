@@ -1,49 +1,55 @@
 import React, { useEffect, useState } from "react";
+import BootstrapTable from "react-bootstrap-table-next";
+import filterFactory, {
+  selectFilter
+} from "react-bootstrap-table2-filter";
+import paginationFactory, {
+  PaginationListStandalone,
+  PaginationProvider
+} from "react-bootstrap-table2-paginator";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { Col, Row } from "reactstrap";
+import { Badge, Button, Col, Row, Table } from "reactstrap";
 import Swal from "sweetalert2";
 import bookApi from "../../api/bookApi";
 import listDataAddBookApi from "../../api/listDataAddBookApi";
 import warehouseApi from "../../api/warehouseApi";
 import BreadCrumb from "../../components/breadcrumb/BreadCrumb";
-import { GetPageFromUrl } from "../../components/convert-url/GetPageFromUrl";
 import { useDocTitle } from "../../components/custom-title-page/CustomTitlePage";
 import modalError from "../../components/modal/Error";
 import modalSuccess from "../../components/modal/Success";
-import Pagination from "../../components/paginate/Pagination";
 import SelectSearch from "../../components/search/selectSearch";
 import {
   setDataBook,
-  setLoadingData as setLoadingDataBook,
+  setLoadingData as setLoadingDataBook
 } from "../../store/book";
 import { setDataSelect, setLoadingDataSelect } from "../../store/select";
 import {
   addWareHouse,
   setDataWare,
-  setLoadingData,
-  setPageWare,
-  setStatus,
+  setLoadingData, setStatus
 } from "../../store/warehouse";
 import AddEdit from "./AddEdit";
-import Table from "./TableWareHouse";
 import View from "./View";
+
+let statusFilter = () => {};
+let hinhthucFilter = () => {};
 
 WareHouse.propTypes = {};
 
 const optionTrangThai = [
-  { id: 1, name: "Đã nhập kho" },
-  { id: 0, name: "Đã hủy" },
+  { value: 0, label: "Đã hủy" },
+  { value: 1, label: "Đã nhập kho" },
 ];
 
 const optionHinhThuc = [
-  { id: 1, name: "Nhập mới" },
-  { id: 2, name: "Trả hàng" },
+  { value: 1, label: "Nhập mới" },
+  { value: 2, label: "Trả hàng" },
 ];
 
 function WareHouse(props) {
   const nameTitleInitial = "Quản lý nhập kho";
-  const [, setDocTitle] = useDocTitle(nameTitleInitial);
+  useDocTitle(nameTitleInitial);
 
   const dispatch = useDispatch();
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -51,19 +57,17 @@ function WareHouse(props) {
   let {
     storeBook,
     storeWareHouse,
-    storePageWare,
     loadingWare,
     storeDataSelect,
-    loadingDataSelect
+    loadingDataSelect,
   } = useSelector((state) => ({
     storeBook: state.book.books,
     storeWareHouse: state.warehouse.warehouse,
-    storePageWare: state.warehouse.page,
     loadingWare: state.warehouse.loadingPage,
     storeDataSelect: state.select.dataSelect,
-    loadingDataSelect : state.select.loadingPage,
+    loadingDataSelect: state.select.loadingPage,
   }));
-
+  // console.log("storeDataSelect: ", storeDataSelect);
 
   // kiểm tra tính năng add hay edit
   const [isAddMode, setIsAddMode] = useState(true);
@@ -92,22 +96,176 @@ function WareHouse(props) {
     };
   }
 
-  // lấy numberPage trên url
-  const location = useLocation();
-
-
-  //paginate
-  let [PageSize, setPageSize] = useState(storePageWare);
-  const [currentPage, setCurrentPage] = useState(1);
-  const firstPageIndex = (currentPage - 1) * PageSize;
-  const lastPageIndex = firstPageIndex + PageSize;
-  const currentItems = storeWareHouse.slice(firstPageIndex, lastPageIndex);
-
-  //get page từ url
-  const pageFromUrl = GetPageFromUrl(location.search);
 
   //mở modal
   const [modal, setModal] = useState(false);
+
+  const [params, setParams] = useState({
+    status: "",
+    hinh_thuc: "",
+    nha_cung_cap: "",
+  });
+
+  const covertArray = (dara) => {
+    let arr =
+      dara &&
+      dara.map((val) => {
+        return {
+          id: val.value,
+          name: val.label,
+        };
+      });
+    return arr;
+  };
+
+  const defaultSorted = [
+    {
+      dataField: `${Number("id")}`,
+      order: "asc",
+    },
+  ];
+
+  const pageOptions = {
+    sizePerPage: 10,
+    totalSize: storeWareHouse.length,
+    custom: true,
+  };
+
+  const columnDisplay = [
+    {
+      text: "",
+      dataField: "id",
+      sort: true,
+      formatter: (id, storeDataOrder, row) => (
+        <>
+          <p className="d-inline-block text-truncate mb-0">{row + 1}</p>
+        </>
+      ),
+      classes: "d-none",
+      headerClasses: "table-light d-none",
+    },
+    {
+      text: "#",
+      dataField: "stt",
+      sort: true,
+      formatter: (id, storeDataOrder, row) => (
+        <>
+          <p className="d-inline-block text-truncate mb-0">{row + 1}</p>
+        </>
+      ),
+      headerClasses: "table-light",
+    },
+    {
+      text: "Hình thức",
+      dataField: "formality",
+      sort: true,
+      formatter: (formality, storeDataOrder) => (
+        <>
+          {Number(formality) === 1 ? (
+            <Badge color="primary">Nhập mới</Badge>
+          ) : (
+            <Badge color="secondary">Trả hàng</Badge>
+          )}
+        </>
+      ),
+      filter: selectFilter({
+        options: optionHinhThuc,
+        getFilter: (filter) => {
+          hinhthucFilter = filter;
+        },
+        style: { display: "none" },
+      }),
+      headerClasses: "table-light",
+    },
+    {
+      text: "Người tạo",
+      dataField: "by_admin",
+      sort: true,
+      formatter: (by_admin, storeDataOrder) => <>{by_admin}</>,
+      headerClasses: "table-light",
+    },
+    {
+      text: "Nhà cung cấp",
+      dataField: "supplier",
+      sort: true,
+      formatter: (supplier, storeDataOrder) => <>{supplier}</>,
+      headerClasses: "table-light",
+    },
+    {
+      text: "Tổng giá nhập",
+      dataField: "total",
+      sort: true,
+      formatter: (total, storeDataOrder) => (
+        <>
+          {Number(total).toLocaleString("it-IT", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </>
+      ),
+      headerClasses: "table-light",
+    },
+    {
+      text: "Trạng thái",
+      dataField: "status",
+      sort: true,
+      formatter: (status, storeDataOrder) => (
+        <>
+          {Number(status) === 1 ? (
+            <Badge color="success">Đã nhập kho</Badge>
+          ) : (
+            <Badge color="light">Đã hủy</Badge>
+          )}
+        </>
+      ),
+      filter: selectFilter({
+        options: optionTrangThai,
+        getFilter: (filter) => {
+          statusFilter = filter;
+        },
+        style: { display: "none" },
+      }),
+      headerClasses: "table-light",
+    },
+    {
+      text: "",
+      dataField: "",
+      formatter: (id, storeDataOrder) => (
+        <div className="d-flex align-items-center justify-content-center">
+          <Button
+            color="danger"
+            onClick={() => handleRemoveClick(storeDataOrder.id)}
+            disabled={Number(storeDataOrder.status) === 1 ? false : true}
+          >
+            <i className="bx bx-trash"></i>
+          </Button>
+          <Button
+            color="info"
+            className="mr-2 ml-2"
+            onClick={() => handleViewClick(storeDataOrder.id)}
+          >
+            <i className="bx bx-show"></i>
+          </Button>
+          <Button
+            color="info"
+            onClick={() => handleEditClick(storeDataOrder.id)}
+            disabled={Number(storeDataOrder.status) === 1 ? true : false}
+          >
+            <i className="bx bx-reset"></i>
+          </Button>
+        </div>
+      ),
+      headerClasses: "table-light",
+    },
+  ];
+
+  useEffect(() => {
+    if (typeof statusFilter == "function" && storeWareHouse.length > 0) {
+      statusFilter(params.status);
+      hinhthucFilter(params.hinh_thuc);
+    }
+    // eslint-disable-next-line
+  }, [params]);
 
   //load data lên store
   useEffect(() => {
@@ -122,10 +280,6 @@ function WareHouse(props) {
         dispatch(setLoadingDataSelect(false));
         dispatch(setDataBook(books.data));
         dispatch(setLoadingDataBook(false));
-        if (pageFromUrl !== undefined) {
-          setCurrentPage(Number(pageFromUrl));
-          setDocTitle(`Trang ${pageFromUrl} - ${nameTitleInitial}`);
-        }
       } catch (error) {
         console.error(error);
       }
@@ -133,7 +287,7 @@ function WareHouse(props) {
     LoadData();
 
     // eslint-disable-next-line
-  }, []);
+  }, [storeWareHouse]);
 
   //open moadal
   const openModal = () => {
@@ -263,13 +417,6 @@ function WareHouse(props) {
     });
   };
 
-  //set item trên 1 table
-  const selectItem = [3, 5, 10, 20, 50];
-  const handleAddrTypeChange = (e) => {
-    setPageSize(Number(e.target.value));
-    dispatch(setPageWare(Number(e.target.value)));
-  };
-
   //view
   const [dataView, setDataView] = useState();
   const handleViewClick = (id) => {
@@ -277,12 +424,6 @@ function WareHouse(props) {
     setDataView(warehouseView);
     window.$("#viewInfoware").modal("show");
   };
-
-  const [params, setParams] = useState({
-    status: "",
-    hinh_thuc: "",
-    nha_cung_cap: "",
-  });
 
   return (
     <>
@@ -303,7 +444,7 @@ function WareHouse(props) {
               label="Lọc theo trạng thái"
               placeholder="Chọn trạng thái ..."
               name="status"
-              options={optionTrangThai}
+              options={covertArray(optionTrangThai)}
               getLabel={false}
               loading={loadingDataSelect}
             />
@@ -315,42 +456,11 @@ function WareHouse(props) {
               label="Lọc theo hình thức"
               placeholder="Chọn hình thức ..."
               name="hinh_thuc"
-              options={optionHinhThuc}
+              options={covertArray(optionHinhThuc)}
               getLabel={false}
             />
           </Col>
         </Row>
-        <div className="row">
-          <div className="col-6">
-            <SelectSearch
-              values={params}
-              setValues={setParams}
-              label="Lọc theo nhà cung cấp"
-              placeholder="Chọn nhà cung cấp ..."
-              name="nha_cung_cap"
-              options={storeDataSelect.supplier}
-              getLabel={true}
-            />
-          </div>
-          <div className="col-6">
-            <div className="form-group">
-              <label htmlFor="exampleFormControlSelect1">
-                Số Item Hiển Thị Trong Bảng
-              </label>
-              <select
-                className="form-control"
-                onChange={handleAddrTypeChange}
-                value={PageSize}
-              >
-                {selectItem.map((item, index) => (
-                  <option key={index} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
         <div className="row">
           <div className="col-12">
             <div className="card">
@@ -365,29 +475,143 @@ function WareHouse(props) {
                 </button>
               </div>
               <div className="tableWrapper card-content">
-                <Table
-                  onRemoveClick={handleRemoveClick}
-                  onEditClick={handleEditClick}
-                  onViewClick={handleViewClick}
-                  warehouse={currentItems}
-                  params={params}
-                />
+                <div className="table-responsive">
+                  {storeWareHouse && storeWareHouse.length > 0 ? (
+                    <PaginationProvider
+                      pagination={paginationFactory(pageOptions)}
+                      keyField="id"
+                      columns={columnDisplay}
+                      data={storeWareHouse}
+                    >
+                      {({ paginationProps, paginationTableProps }) => (
+                        <ToolkitProvider
+                          keyField="id"
+                          data={storeWareHouse}
+                          columns={columnDisplay}
+                          bootstrap4
+                          search
+                        >
+                          {(toolkitProps) => (
+                            <React.Fragment>
+                              <div className="table-responsive">
+                                <BootstrapTable
+                                  keyField="id"
+                                  {...toolkitProps.baseProps}
+                                  {...paginationTableProps}
+                                  defaultSorted={defaultSorted}
+                                  filter={filterFactory()}
+                                  classes={
+                                    "table align-middle table-nowrap table-hover bg-select-row"
+                                  }
+                                  noDataIndication={() => (
+                                    <div
+                                      style={{
+                                        textAlign: "center",
+                                      }}
+                                    >
+                                      {loadingWare
+                                        ? "Đang tải dữ liệu vui lòng chờ ..."
+                                        : "Không tìm thấy dữ liệu."}
+                                    </div>
+                                  )}
+                                  bordered={false}
+                                  striped={false}
+                                  responsive
+                                  // selectRow={selectRow}
+                                />
+                              </div>
+                              <div>
+                                {" "}
+                                {loadingWare ? (
+                                  <table className="tg"></table>
+                                ) : null}
+                              </div>
+                              <div className="custom-pagination pagination pagination-rounded justify-content-end mb-2">
+                                <PaginationListStandalone
+                                  {...paginationProps}
+                                />
+                              </div>
+                            </React.Fragment>
+                          )}
+                        </ToolkitProvider>
+                      )}
+                    </PaginationProvider>
+                  ) : (
+                    <Table>
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Hình thức</th>
+                          <th scope="col">Người tạo</th>
+                          <th scope="col">Nhà cung cấp</th>
+                          <th scope="col">Tổng giá nhập</th>
+                          <th scope="col">Trạng thái</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      {loadingWare ? (
+                        <tbody>
+                          <tr>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                            <td className="tg-cly1">
+                              <div className="line" />
+                            </td>
+                          </tr>
+                        </tbody>
+                      ) : (
+                        <tbody>
+                          <tr>
+                            <td colSpan="8" style={{ textAlign: "center" }}>
+                              Không tìm thấy phiếu nhập.
+                            </td>
+                          </tr>
+                        </tbody>
+                      )}
+                    </Table>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12">
-            {loadingWare ? null : (
-              <Pagination
-                currentPage={currentPage}
-                totalCount={storeWareHouse.length}
-                pageSize={PageSize}
-                onPageChange={(page) => setCurrentPage(page)}
-                title={nameTitleInitial}
-                setTitle={setDocTitle}
-              />
-            )}
           </div>
         </div>
       </section>
