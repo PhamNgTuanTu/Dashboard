@@ -15,7 +15,27 @@ import Slider from './pages/slider/Slider';
 import Suppliers from "./pages/suppliers/Suppliers";
 import Users from "./pages/users/Users";
 import WareHouse from "./pages/warehouse/Warehouse";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDj5CYdtdstTt6FuvyOrFFYPXYjhrkuClA",
+  authDomain: "staciabook-cms.firebaseapp.com",
+  projectId: "staciabook-cms",
+  storageBucket: "staciabook-cms.appspot.com",
+  messagingSenderId: "488246942647",
+  appId: "1:488246942647:web:a42c310fac816c1231a632",
+  measurementId: "G-857B8ZQDXQ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 const DefaultContainer = () => (
   <>

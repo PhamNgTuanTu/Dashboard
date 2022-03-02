@@ -287,7 +287,7 @@ function WareHouse(props) {
     LoadData();
 
     // eslint-disable-next-line
-  }, [storeWareHouse]);
+  }, []);
 
   //open moadal
   const openModal = () => {

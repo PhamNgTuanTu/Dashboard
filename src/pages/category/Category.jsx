@@ -176,9 +176,8 @@ function Category(props) {
       }
     }
     LoadData();
-
     // eslint-disable-next-line
-  }, [category]);
+  }, []);
 
   //open moadal
   const openModal = () => {

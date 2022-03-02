@@ -181,7 +181,7 @@ function Author(props) {
     }
     LoadData();
     // eslint-disable-next-line
-  }, [authors]);
+  }, []);
 
   //open moadal
   const openModal = () => {
