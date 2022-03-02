@@ -30,8 +30,9 @@
 ![JavaScript](https://img.shields.io/badge/-JavaScript-05122A?style=flat&logo=javascript)&nbsp;
 ![Bootstrap](https://img.shields.io/badge/-Bootstrap-05122A?style=flat&logo=bootstrap&logoColor=563D7C)
 ![jQuery](https://img.shields.io/badge/-jQuery-05122A?style=flat&logo=jquery)&nbsp;
-![Reactstrap](https://img.shields.io/badge/-Reactstrap-05122A?style=flat&logo=reactstrap)&nbsp;
-![Api](https://img.shields.io/badge/-Api-05122A?style=flat&logo=api)&nbsp;
+![Redux](https://img.shields.io/badge/-Redux-05122A?style=flat&logo=redux)&nbsp;
+![React](https://img.shields.io/badge/-Reactstrap-05122A?style=flat&logo=react)&nbsp;
+![Json](https://img.shields.io/badge/-Json-05122A?style=flat&logo=json)&nbsp;
 
 <br>
 
